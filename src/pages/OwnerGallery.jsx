@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import {
   collection,
   query,
- orderBy,
+  orderBy,
   onSnapshot,
 } from "firebase/firestore";
 
@@ -62,8 +62,10 @@ function OwnerGallery() {
 
     link.href = blobUrl;
 
-    link.download =
-      "walnory-photo.jpg";
+    link.setAttribute(
+      "download",
+      "walnory-photo.jpg"
+    );
 
     document.body.appendChild(
       link
@@ -127,7 +129,7 @@ function OwnerGallery() {
                   }
                   style={{
                     width: "100%",
-                    maxHeight: "420px",
+                    maxHeight: "220px",
                     objectFit: "contain",
                     background: "#f3f3f3",
                     borderRadius: "16px",
