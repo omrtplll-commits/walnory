@@ -46,42 +46,14 @@ function OwnerGallery() {
     return () => unsubscribe();
   }, []);
 
-  const downloadImage = async (
-    imageUrl
+  const downloadImage = (
+    url
   ) => {
-    try {
-      const response =
-        await fetch(imageUrl);
+    const newTab =
+      window.open(url, "_blank");
 
-      const blob =
-        await response.blob();
-
-      const blobUrl =
-        URL.createObjectURL(blob);
-
-      const a =
-        document.createElement("a");
-
-      a.href = blobUrl;
-
-      a.download =
-        "walnory-photo.jpg";
-
-      document.body.appendChild(a);
-
-      a.click();
-
-      document.body.removeChild(a);
-
-      URL.revokeObjectURL(
-        blobUrl
-      );
-    } catch (error) {
-      alert(
-        "Download failed"
-      );
-
-      console.error(error);
+    if (newTab) {
+      newTab.focus();
     }
   };
 
@@ -160,7 +132,7 @@ function OwnerGallery() {
                     cursor: "pointer",
                   }}
                 >
-                  DOWNLOAD PHOTO
+                  OPEN FULL PHOTO
                 </button>
               </>
             )}
