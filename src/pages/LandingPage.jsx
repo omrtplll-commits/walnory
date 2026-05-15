@@ -1,18 +1,26 @@
 import { useState } from "react";
 import { db } from "../firebase";
 import { doc, setDoc } from "firebase/firestore";
+import QRCode from "qrcode";
 
 function LandingPage() {
   const [coupleName, setCoupleName] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [city, setCity] = useState("");
   const [venueName, setVenueName] = useState("");
-  const [packageType, setPackageType] = useState("basic");
+  const [packageType, setPackageType] =
+    useState("basic");
 
   const createEvent = async () => {
     const token = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
+
+    const welcomeUrl =
+      `${window.location.origin}/welcome/${token}`;
+
+    const galleryUrl =
+      `${window.location.origin}/gallery/${token}`;
 
     await setDoc(doc(db, "events", token), {
       token,
@@ -24,14 +32,30 @@ function LandingPage() {
       createdAt: Date.now(),
     });
 
+    const qrDataUrl =
+      await QRCode.toDataURL(welcomeUrl);
+
+    const link = document.createElement("a");
+    link.href = qrDataUrl;
+    link.download = `walnory-${token}.png`;
+    link.click();
+
+    navigator.clipboard.writeText(
+      welcomeUrl
+    );
+
     alert(
       `EVENT CREATED 🎉
 
+QR DOWNLOADED ✅
+
+LINK COPIED ✅
+
 Welcome:
-${window.location.origin}/welcome/${token}
+${welcomeUrl}
 
 Gallery:
-${window.location.origin}/gallery/${token}`
+${galleryUrl}`
     );
   };
 
@@ -53,7 +77,8 @@ ${window.location.origin}/gallery/${token}`
           borderRadius: "20px",
           width: "100%",
           maxWidth: "500px",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+          boxShadow:
+            "0 10px 30px rgba(0,0,0,0.08)",
         }}
       >
         <h1
@@ -109,6 +134,7 @@ ${window.location.origin}/gallery/${token}`
           style={inputStyle}
         >
           <option value="basic">Basic</option>
+
           <option value="premium">
             Premium
           </option>
