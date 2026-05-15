@@ -31,6 +31,9 @@ function WeddingPage() {
   const [image, setImage] =
     useState(null);
 
+  const [preview, setPreview] =
+    useState("");
+
   const [loading, setLoading] =
     useState(false);
 
@@ -50,6 +53,18 @@ function WeddingPage() {
     if (snap.exists()) {
       setEventData(snap.data());
     }
+  };
+
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    setImage(file);
+
+    setPreview(
+      URL.createObjectURL(file)
+    );
   };
 
   const submitMessage = async () => {
@@ -93,6 +108,7 @@ function WeddingPage() {
     setMessage("");
     setName("");
     setImage(null);
+    setPreview("");
 
     setLoading(false);
 
@@ -186,15 +202,27 @@ function WeddingPage() {
 
         <input
           type="file"
-          onChange={(e) =>
-            setImage(
-              e.target.files[0]
-            )
-          }
+          onChange={handleImage}
           style={{
             marginBottom: "20px",
           }}
         />
+
+        {preview && (
+          <img
+            src={preview}
+            alt="preview"
+            style={{
+              width: "140px",
+              height: "140px",
+              objectFit: "cover",
+              borderRadius: "16px",
+              marginBottom: "20px",
+              border:
+                "1px solid #ddd",
+            }}
+          />
+        )}
 
         <button
           onClick={submitMessage}
