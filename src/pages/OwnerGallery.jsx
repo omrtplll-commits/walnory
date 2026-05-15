@@ -17,6 +17,9 @@ function OwnerGallery() {
   const [messages, setMessages] =
     useState([]);
 
+  const [selectedImage, setSelectedImage] =
+    useState("");
+
   useEffect(() => {
     const q = query(
       collection(
@@ -42,6 +45,17 @@ function OwnerGallery() {
 
     return () => unsubscribe();
   }, []);
+
+  const downloadImage = (url) => {
+    const link =
+      document.createElement("a");
+
+    link.href = url;
+
+    link.download = "walnory-photo";
+
+    link.click();
+  };
 
   return (
     <div
@@ -81,17 +95,45 @@ function OwnerGallery() {
             }}
           >
             {item.imageUrl && (
-              <img
-                src={item.imageUrl}
-                alt=""
-                style={{
-                  width: "100%",
-                  height: "260px",
-                  objectFit: "cover",
-                  borderRadius: "16px",
-                  marginBottom: "16px",
-                }}
-              />
+              <>
+                <img
+                  src={item.imageUrl}
+                  alt=""
+                  onClick={() =>
+                    setSelectedImage(
+                      item.imageUrl
+                    )
+                  }
+                  style={{
+                    width: "100%",
+                    height: "260px",
+                    objectFit: "cover",
+                    borderRadius: "16px",
+                    marginBottom: "16px",
+                    cursor: "pointer",
+                  }}
+                />
+
+                <button
+                  onClick={() =>
+                    downloadImage(
+                      item.imageUrl
+                    )
+                  }
+                  style={{
+                    width: "100%",
+                    padding: "12px",
+                    border: "none",
+                    borderRadius: "12px",
+                    background: "#222",
+                    color: "white",
+                    marginBottom: "16px",
+                    cursor: "pointer",
+                  }}
+                >
+                  DOWNLOAD PHOTO
+                </button>
+              </>
             )}
 
             <h3
@@ -113,6 +155,35 @@ function OwnerGallery() {
           </div>
         ))}
       </div>
+
+      {selectedImage && (
+        <div
+          onClick={() =>
+            setSelectedImage("")
+          }
+          style={{
+            position: "fixed",
+            inset: 0,
+            background:
+              "rgba(0,0,0,0.8)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "40px",
+            zIndex: 999,
+          }}
+        >
+          <img
+            src={selectedImage}
+            alt=""
+            style={{
+              maxWidth: "90%",
+              maxHeight: "90%",
+              borderRadius: "20px",
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
