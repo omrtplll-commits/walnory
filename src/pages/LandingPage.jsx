@@ -11,6 +11,10 @@ function LandingPage() {
   const [packageType, setPackageType] =
     useState("basic");
 
+  const [qrImage, setQrImage] = useState("");
+  const [welcomeLink, setWelcomeLink] =
+    useState("");
+
   const createEvent = async () => {
     const token = Math.floor(
       100000 + Math.random() * 900000
@@ -18,9 +22,6 @@ function LandingPage() {
 
     const welcomeUrl =
       `${window.location.origin}/welcome/${token}`;
-
-    const galleryUrl =
-      `${window.location.origin}/gallery/${token}`;
 
     await setDoc(doc(db, "events", token), {
       token,
@@ -32,31 +33,29 @@ function LandingPage() {
       createdAt: Date.now(),
     });
 
-    const qrDataUrl =
+    const qrData =
       await QRCode.toDataURL(welcomeUrl);
 
+    setQrImage(qrData);
+    setWelcomeLink(welcomeUrl);
+  };
+
+  const downloadQR = () => {
     const link = document.createElement("a");
-    link.href = qrDataUrl;
-    link.download = `walnory-${token}.png`;
+
+    link.href = qrImage;
+
+    link.download = "walnory-qr.png";
+
     link.click();
+  };
 
+  const copyLink = () => {
     navigator.clipboard.writeText(
-      welcomeUrl
+      welcomeLink
     );
 
-    alert(
-      `EVENT CREATED 🎉
-
-QR DOWNLOADED ✅
-
-LINK COPIED ✅
-
-Welcome:
-${welcomeUrl}
-
-Gallery:
-${galleryUrl}`
-    );
+    alert("LINK COPIED ✅");
   };
 
   return (
@@ -142,20 +141,56 @@ ${galleryUrl}`
 
         <button
           onClick={createEvent}
-          style={{
-            width: "100%",
-            padding: "16px",
-            border: "none",
-            borderRadius: "12px",
-            background: "black",
-            color: "white",
-            fontSize: "16px",
-            cursor: "pointer",
-            marginTop: "10px",
-          }}
+          style={buttonStyle}
         >
           CREATE EVENT
         </button>
+
+        {qrImage && (
+          <div
+            style={{
+              marginTop: "40px",
+              textAlign: "center",
+            }}
+          >
+            <img
+              src={qrImage}
+              alt="QR"
+              style={{
+                width: "220px",
+                marginBottom: "20px",
+              }}
+            />
+
+            <div
+              style={{
+                wordBreak: "break-all",
+                marginBottom: "20px",
+                fontSize: "14px",
+              }}
+            >
+              {welcomeLink}
+            </div>
+
+            <button
+              onClick={downloadQR}
+              style={buttonStyle}
+            >
+              DOWNLOAD QR
+            </button>
+
+            <button
+              onClick={copyLink}
+              style={{
+                ...buttonStyle,
+                marginTop: "12px",
+                background: "#444",
+              }}
+            >
+              COPY LINK
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -169,6 +204,17 @@ const inputStyle = {
   border: "1px solid #ddd",
   fontSize: "15px",
   boxSizing: "border-box",
+};
+
+const buttonStyle = {
+  width: "100%",
+  padding: "16px",
+  border: "none",
+  borderRadius: "12px",
+  background: "black",
+  color: "white",
+  fontSize: "16px",
+  cursor: "pointer",
 };
 
 export default LandingPage;
