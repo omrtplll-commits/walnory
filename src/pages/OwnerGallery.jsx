@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import {
   collection,
   query,
-  orderBy,
+ orderBy,
   onSnapshot,
 } from "firebase/firestore";
 
@@ -46,15 +46,36 @@ function OwnerGallery() {
     return () => unsubscribe();
   }, []);
 
-  const downloadImage = (url) => {
+  const downloadImage = async (
+    url
+  ) => {
+    const response = await fetch(url);
+
+    const blob =
+      await response.blob();
+
+    const blobUrl =
+      window.URL.createObjectURL(blob);
+
     const link =
       document.createElement("a");
 
-    link.href = url;
+    link.href = blobUrl;
 
-    link.download = "walnory-photo";
+    link.download =
+      "walnory-photo.jpg";
+
+    document.body.appendChild(
+      link
+    );
 
     link.click();
+
+    link.remove();
+
+    window.URL.revokeObjectURL(
+      blobUrl
+    );
   };
 
   return (
@@ -106,8 +127,9 @@ function OwnerGallery() {
                   }
                   style={{
                     width: "100%",
-                    height: "260px",
-                    objectFit: "cover",
+                    maxHeight: "420px",
+                    objectFit: "contain",
+                    background: "#f3f3f3",
                     borderRadius: "16px",
                     marginBottom: "16px",
                     cursor: "pointer",
