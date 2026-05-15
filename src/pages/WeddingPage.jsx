@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-
 import { useParams } from "react-router-dom";
 
 import {
-  collection,
-  addDoc,
   doc,
   getDoc,
+  collection,
+  addDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 
 import {
@@ -23,262 +23,197 @@ function WeddingPage() {
   const [eventData, setEventData] =
     useState(null);
 
-  const [name, setName] = useState("");
-
   const [message, setMessage] =
     useState("");
 
-  const [selectedFile, setSelectedFile] =
-    useState(null);
+  const [name, setName] = useState("");
 
-  const [selectedImage, setSelectedImage] =
+  const [image, setImage] =
     useState(null);
-
-  const [success, setSuccess] =
-    useState(false);
 
   const [loading, setLoading] =
-    useState(true);
-
-  const messagesRef = collection(
-    db,
-    "events",
-    token,
-    "messages"
-  );
+    useState(false);
 
   useEffect(() => {
-    fetchEventData();
+    loadEvent();
   }, []);
 
-  const fetchEventData = async () => {
-    const docRef = doc(db, "events", token);
+  const loadEvent = async () => {
+    const docRef = doc(
+      db,
+      "events",
+      token
+    );
 
-    const snapshot = await getDoc(docRef);
+    const snap = await getDoc(docRef);
 
-    if (snapshot.exists()) {
-      setEventData(snapshot.data());
+    if (snap.exists()) {
+      setEventData(snap.data());
+    }
+  };
+
+  const submitMessage = async () => {
+    if (!message || !name) {
+      alert("Fill all fields");
+      return;
     }
 
-    setLoading(false);
-  };
+    setLoading(true);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
+    let imageUrl = "";
 
-    if (!file) return;
+    if (image) {
+      const imageRef = ref(
+        storage,
+        `eventPhotos/${token}/${Date.now()}`
+      );
 
-    setSelectedFile(file);
+      await uploadBytes(imageRef, image);
 
-    setSelectedImage(
-      URL.createObjectURL(file)
-    );
-  };
+      imageUrl = await getDownloadURL(
+        imageRef
+      );
+    }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      let imageUrl = "";
-
-      // FOTO YÜKLE
-      if (selectedFile) {
-        const imageRef = ref(
-          storage,
-          `eventPhotos/${Date.now()}-${selectedFile.name}`
-        );
-
-        const uploadResult =
-          await uploadBytes(
-            imageRef,
-            selectedFile
-          );
-
-        imageUrl =
-          await getDownloadURL(
-            uploadResult.ref
-          );
-
-        console.log(
-          "IMAGE URL:",
-          imageUrl
-        );
-      }
-
-      // FIRESTORE KAYIT
-      await addDoc(messagesRef, {
+    await addDoc(
+      collection(
+        db,
+        "events",
+        token,
+        "messages"
+      ),
+      {
         name,
         message,
         imageUrl,
-        createdAt: Date.now(),
-      });
+        createdAt: serverTimestamp(),
+      }
+    );
 
-      alert("Your message has been delivered ✨");
+    setMessage("");
+    setName("");
+    setImage(null);
 
-      setName("");
-      setMessage("");
-      setSelectedFile(null);
-      setSelectedImage(null);
+    setLoading(false);
 
-      setSuccess(true);
-
-      setTimeout(() => {
-        setSuccess(false);
-      }, 2500);
-    } catch (error) {
-      console.log(error);
-
-      alert(error.message);
-    }
+    alert("MESSAGE SENT 🎉");
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
+  if (!eventData) {
+    return (
+      <div
+        style={{
+          padding: "40px",
+        }}
+      >
+        Loading...
+      </div>
+    );
   }
 
   return (
     <div
       style={{
         minHeight: "100vh",
-        background:
-          "linear-gradient(to bottom right, #f8f5f0, #efe7dc)",
-        padding: "24px 16px",
-        fontFamily: "Inter, sans-serif",
+        background: "#f5f1eb",
+        padding: "40px",
+        display: "flex",
+        justifyContent: "center",
       }}
     >
-      {success && (
-        <div
-          style={{
-            position: "fixed",
-            top: "20px",
-            left: "20px",
-            right: "20px",
-            background: "#2f2a24",
-            color: "white",
-            padding: "16px",
-            borderRadius: "14px",
-            textAlign: "center",
-            zIndex: 999,
-          }}
-        >
-          Your message has been delivered ✨
-        </div>
-      )}
-
       <div
         style={{
           width: "100%",
-          maxWidth: "680px",
-          margin: "0 auto",
+          maxWidth: "700px",
+          background: "white",
+          borderRadius: "24px",
+          padding: "40px",
+          boxShadow:
+            "0 10px 30px rgba(0,0,0,0.08)",
         }}
       >
-        <div
+        <h1
           style={{
             textAlign: "center",
-            marginBottom: "36px",
+            fontSize: "42px",
+            marginBottom: "10px",
           }}
         >
-          <p
-            style={{
-              letterSpacing: "4px",
-              color: "#9f8b73",
-              marginBottom: "10px",
-              fontSize: "13px",
-            }}
-          >
-            WALNORY
-          </p>
+          {eventData.coupleName}
+        </h1>
 
-          <h1
-            style={{
-              fontFamily:
-                "Cormorant Garamond, serif",
-              fontSize: "clamp(42px, 8vw, 64px)",
-              color: "#2f2a24",
-            }}
-          >
-            {eventData?.coupleName}
-          </h1>
-
-          <p>{eventData?.location}</p>
-
-          <p>{eventData?.eventDate}</p>
-        </div>
-
-        <div
+        <p
           style={{
-            background:
-              "rgba(255,255,255,0.6)",
-            backdropFilter: "blur(12px)",
-            borderRadius: "24px",
-            padding: "22px",
+            textAlign: "center",
+            opacity: 0.7,
+            marginBottom: "40px",
           }}
         >
-          <form
-            onSubmit={handleSubmit}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "18px",
-            }}
-          >
-            <input
-              type="text"
-              placeholder="Your name"
-              value={name}
-              onChange={(e) =>
-                setName(e.target.value)
-              }
-              style={inputStyle}
-            />
+          {eventData.eventDate}
+          <br />
+          {eventData.city}
+          <br />
+          {eventData.venueName}
+        </p>
 
-            <textarea
-              placeholder="Write your message..."
-              value={message}
-              onChange={(e) =>
-                setMessage(e.target.value)
-              }
-              rows={5}
-              style={{
-                ...inputStyle,
-                resize: "none",
-              }}
-            />
+        <textarea
+          placeholder="Write your message..."
+          value={message}
+          onChange={(e) =>
+            setMessage(e.target.value)
+          }
+          style={{
+            width: "100%",
+            minHeight: "140px",
+            padding: "16px",
+            borderRadius: "14px",
+            border: "1px solid #ddd",
+            marginBottom: "16px",
+            resize: "none",
+            fontSize: "15px",
+            boxSizing: "border-box",
+          }}
+        />
 
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
+        <input
+          placeholder="Your name"
+          value={name}
+          onChange={(e) =>
+            setName(e.target.value)
+          }
+          style={inputStyle}
+        />
 
-            {selectedImage && (
-              <img
-                src={selectedImage}
-                alt=""
-                style={{
-                  width: "100%",
-                  borderRadius: "18px",
-                  maxHeight: "320px",
-                  objectFit: "cover",
-                }}
-              />
-            )}
+        <input
+          type="file"
+          onChange={(e) =>
+            setImage(
+              e.target.files[0]
+            )
+          }
+          style={{
+            marginBottom: "20px",
+          }}
+        />
 
-            <button
-              type="submit"
-              style={{
-                background: "#2f2a24",
-                color: "white",
-                border: "none",
-                padding: "16px",
-                borderRadius: "14px",
-                cursor: "pointer",
-              }}
-            >
-              Send Message
-            </button>
-          </form>
-        </div>
+        <button
+          onClick={submitMessage}
+          disabled={loading}
+          style={{
+            width: "100%",
+            padding: "16px",
+            border: "none",
+            borderRadius: "14px",
+            background: "black",
+            color: "white",
+            fontSize: "16px",
+            cursor: "pointer",
+          }}
+        >
+          {loading
+            ? "Sending..."
+            : "SEND MESSAGE"}
+        </button>
       </div>
     </div>
   );
@@ -286,12 +221,11 @@ function WeddingPage() {
 
 const inputStyle = {
   width: "100%",
-  padding: "16px",
-  borderRadius: "14px",
+  padding: "14px",
+  borderRadius: "12px",
   border: "1px solid #ddd",
+  marginBottom: "16px",
   fontSize: "15px",
-  outline: "none",
-  background: "rgba(255,255,255,0.8)",
   boxSizing: "border-box",
 };
 
