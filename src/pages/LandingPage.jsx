@@ -5,7 +5,8 @@ import { doc, setDoc } from "firebase/firestore";
 function LandingPage() {
   const [coupleName, setCoupleName] = useState("");
   const [eventDate, setEventDate] = useState("");
-  const [location, setLocation] = useState("");
+  const [city, setCity] = useState("");
+  const [venueName, setVenueName] = useState("");
   const [packageType, setPackageType] = useState("basic");
 
   const createEvent = async () => {
@@ -17,7 +18,8 @@ function LandingPage() {
       token,
       coupleName,
       eventDate,
-      location,
+      city,
+      venueName,
       packageType,
       createdAt: Date.now(),
     });
@@ -82,10 +84,19 @@ ${window.location.origin}/gallery/${token}`
         />
 
         <input
-          placeholder="Location"
-          value={location}
+          placeholder="City"
+          value={city}
           onChange={(e) =>
-            setLocation(e.target.value)
+            setCity(e.target.value)
+          }
+          style={inputStyle}
+        />
+
+        <input
+          placeholder="Venue Name"
+          value={venueName}
+          onChange={(e) =>
+            setVenueName(e.target.value)
           }
           style={inputStyle}
         />
