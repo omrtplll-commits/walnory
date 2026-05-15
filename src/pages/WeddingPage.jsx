@@ -26,7 +26,8 @@ function WeddingPage() {
   const [message, setMessage] =
     useState("");
 
-  const [name, setName] = useState("");
+  const [name, setName] =
+    useState("");
 
   const [image, setImage] =
     useState(null);
@@ -112,7 +113,9 @@ function WeddingPage() {
 
     setLoading(false);
 
-    alert("MESSAGE SENT 🎉");
+    alert(
+      "Your memory has been added ✨"
+    );
   };
 
   if (!eventData) {
@@ -131,8 +134,9 @@ function WeddingPage() {
     <div
       style={{
         minHeight: "100vh",
-        background: "#f5f1eb",
-        padding: "40px",
+        background:
+          "linear-gradient(to bottom, #f8f5f0, #efe7dc)",
+        padding: "40px 20px",
         display: "flex",
         justifyContent: "center",
       }}
@@ -140,54 +144,85 @@ function WeddingPage() {
       <div
         style={{
           width: "100%",
-          maxWidth: "700px",
+          maxWidth: "760px",
           background: "white",
-          borderRadius: "24px",
-          padding: "40px",
+          borderRadius: "32px",
+          padding: "50px 35px",
           boxShadow:
-            "0 10px 30px rgba(0,0,0,0.08)",
+            "0 20px 50px rgba(0,0,0,0.08)",
         }}
       >
-        <h1
+        <div
           style={{
             textAlign: "center",
-            fontSize: "42px",
-            marginBottom: "10px",
-          }}
-        >
-          {eventData.coupleName}
-        </h1>
-
-        <p
-          style={{
-            textAlign: "center",
-            opacity: 0.7,
             marginBottom: "40px",
           }}
         >
-          {eventData.eventDate}
-          <br />
-          {eventData.city}
-          <br />
-          {eventData.venueName}
-        </p>
+          <div
+            style={{
+              fontSize: "14px",
+              letterSpacing: "4px",
+              opacity: 0.5,
+              marginBottom: "18px",
+            }}
+          >
+            WEDDING MEMORIES
+          </div>
+
+          <h1
+            style={{
+              fontSize: "54px",
+              marginBottom: "12px",
+              fontWeight: "600",
+              color: "#2d2926",
+            }}
+          >
+            {eventData.coupleName}
+          </h1>
+
+          <div
+            style={{
+              width: "80px",
+              height: "2px",
+              background: "#d8c3a5",
+              margin:
+                "0 auto 20px auto",
+            }}
+          />
+
+          <p
+            style={{
+              opacity: 0.7,
+              lineHeight: "1.8",
+              fontSize: "16px",
+            }}
+          >
+            {eventData.eventDate}
+            <br />
+            {eventData.city}
+            <br />
+            {eventData.venueName}
+          </p>
+        </div>
 
         <textarea
-          placeholder="Write your message..."
+          placeholder="Write your beautiful memory..."
           value={message}
           onChange={(e) =>
             setMessage(e.target.value)
           }
           style={{
             width: "100%",
-            minHeight: "140px",
-            padding: "16px",
-            borderRadius: "14px",
-            border: "1px solid #ddd",
-            marginBottom: "16px",
+            minHeight: "170px",
+            padding: "20px",
+            borderRadius: "20px",
+            border:
+              "1px solid #e5ddd2",
+            marginBottom: "18px",
             resize: "none",
-            fontSize: "15px",
+            fontSize: "16px",
             boxSizing: "border-box",
+            background: "#faf8f5",
           }}
         />
 
@@ -197,31 +232,49 @@ function WeddingPage() {
           onChange={(e) =>
             setName(e.target.value)
           }
-          style={inputStyle}
-        />
-
-        <input
-          type="file"
-          onChange={handleImage}
           style={{
-            marginBottom: "20px",
+            width: "100%",
+            padding: "16px",
+            borderRadius: "16px",
+            border:
+              "1px solid #e5ddd2",
+            marginBottom: "18px",
+            fontSize: "15px",
+            boxSizing: "border-box",
+            background: "#faf8f5",
           }}
         />
 
-        {preview && (
-          <img
-            src={preview}
-            alt="preview"
-            style={{
-              width: "140px",
-              height: "140px",
-              objectFit: "cover",
-              borderRadius: "16px",
-              marginBottom: "20px",
-              border:
-                "1px solid #ddd",
-            }}
+        <div
+          style={{
+            marginBottom: "24px",
+          }}
+        >
+          <input
+            type="file"
+            onChange={handleImage}
           />
+        </div>
+
+        {preview && (
+          <div
+            style={{
+              marginBottom: "24px",
+              textAlign: "center",
+            }}
+          >
+            <img
+              src={preview}
+              alt="preview"
+              style={{
+                width: "180px",
+                borderRadius: "20px",
+                objectFit: "cover",
+                boxShadow:
+                  "0 10px 25px rgba(0,0,0,0.12)",
+              }}
+            />
+          </div>
         )}
 
         <button
@@ -229,32 +282,24 @@ function WeddingPage() {
           disabled={loading}
           style={{
             width: "100%",
-            padding: "16px",
+            padding: "18px",
             border: "none",
-            borderRadius: "14px",
-            background: "black",
+            borderRadius: "18px",
+            background:
+              "linear-gradient(to right,#2d2926,#4a433d)",
             color: "white",
             fontSize: "16px",
+            letterSpacing: "1px",
             cursor: "pointer",
           }}
         >
           {loading
             ? "Sending..."
-            : "SEND MESSAGE"}
+            : "ADD MEMORY"}
         </button>
       </div>
     </div>
   );
 }
-
-const inputStyle = {
-  width: "100%",
-  padding: "14px",
-  borderRadius: "12px",
-  border: "1px solid #ddd",
-  marginBottom: "16px",
-  fontSize: "15px",
-  boxSizing: "border-box",
-};
 
 export default WeddingPage;
