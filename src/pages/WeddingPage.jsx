@@ -7,6 +7,7 @@ import {
   collection,
   addDoc,
   serverTimestamp,
+  onSnapshot,
 } from "firebase/firestore";
 
 import {
@@ -38,8 +39,15 @@ function WeddingPage() {
   const [loading, setLoading] =
     useState(false);
 
+  const [memoryCount, setMemoryCount] =
+    useState(0);
+
+  const [photoCount, setPhotoCount] =
+    useState(0);
+
   useEffect(() => {
     loadEvent();
+    listenMessages();
   }, []);
 
   const loadEvent = async () => {
@@ -54,6 +62,35 @@ function WeddingPage() {
     if (snap.exists()) {
       setEventData(snap.data());
     }
+  };
+
+  const listenMessages = () => {
+    const messagesRef = collection(
+      db,
+      "events",
+      token,
+      "messages"
+    );
+
+    onSnapshot(
+      messagesRef,
+      (snapshot) => {
+        const docs =
+          snapshot.docs.map((doc) =>
+            doc.data()
+          );
+
+        setMemoryCount(docs.length);
+
+        const photos = docs.filter(
+          (item) => item.imageUrl
+        );
+
+        setPhotoCount(
+          photos.length
+        );
+      }
+    );
   };
 
   const handleImage = (e) => {
@@ -205,6 +242,40 @@ function WeddingPage() {
           </p>
         </div>
 
+        <div
+          style={{
+            display: "flex",
+            justifyContent:
+              "space-between",
+            gap: "20px",
+            marginBottom: "35px",
+          }}
+        >
+          <div
+            style={statBox}
+          >
+            <h2>
+              {memoryCount}
+            </h2>
+
+            <p>
+              Memories Shared
+            </p>
+          </div>
+
+          <div
+            style={statBox}
+          >
+            <h2>
+              {photoCount}
+            </h2>
+
+            <p>
+              Photos Uploaded
+            </p>
+          </div>
+        </div>
+
         <textarea
           placeholder="Write your beautiful memory..."
           value={message}
@@ -301,5 +372,13 @@ function WeddingPage() {
     </div>
   );
 }
+
+const statBox = {
+  flex: 1,
+  background: "#faf8f5",
+  borderRadius: "20px",
+  padding: "24px",
+  textAlign: "center",
+};
 
 export default WeddingPage;
