@@ -25,7 +25,7 @@ function LandingPage() {
             marginBottom: "20px",
           }}
         >
-          DIGITAL WEDDING EXPERIENCE
+          DIGITAL EVENT EXPERIENCE
         </div>
 
         <h1
@@ -38,12 +38,12 @@ function LandingPage() {
         >
           Capture Every
           <br />
-          Wedding Memory
+          Special Memory
         </h1>
 
         <p
           style={{
-            maxWidth: "700px",
+            maxWidth: "760px",
             margin: "0 auto",
             fontSize: "20px",
             lineHeight: "1.8",
@@ -53,8 +53,11 @@ function LandingPage() {
           Guests scan your QR code,
           upload photos, and leave
           heartfelt messages in one
-          elegant private wedding
-          gallery.
+          elegant private gallery for
+          weddings, engagements,
+          bridal showers, birthdays,
+          baby showers, and special
+          events.
         </p>
 
         <div
@@ -102,9 +105,11 @@ function LandingPage() {
           </h2>
 
           <p style={cardText}>
-            Purchase your digital
-            wedding QR package from
-            our Etsy store.
+            Purchase your digital QR
+            event package from our
+            Etsy store for weddings,
+            parties, baby showers,
+            engagements, and more.
           </p>
         </div>
 
@@ -114,8 +119,12 @@ function LandingPage() {
           </h2>
 
           <p style={cardText}>
-            Send your purchase proof
-            by email and receive your
+            After your Etsy purchase,
+            send your purchase proof
+            to the email address
+            included inside your PDF
+            file. After verification,
+            you will receive your
             private access token.
           </p>
         </div>
@@ -127,21 +136,144 @@ function LandingPage() {
 
           <p style={cardText}>
             Use your token to create
-            your personalized wedding
-            memory page.
+            your personalized event
+            page and generate your
+            unique QR code in
+            minutes.
           </p>
         </div>
 
         <div style={cardStyle}>
           <h2 style={cardTitle}>
-            4. Share Memories
+            4. Share With Guests
           </h2>
 
           <p style={cardText}>
-            Guests scan the QR code,
-            upload photos, and leave
-            beautiful memories.
+            Share your QR code with
+            guests and start
+            collecting beautiful
+            memories instantly during
+            your event.
           </p>
+        </div>
+      </section>
+
+      <section
+        style={{
+          padding: "90px 20px",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1100px",
+            margin: "0 auto",
+            textAlign: "center",
+          }}
+        >
+          <h2
+            style={{
+              fontSize: "46px",
+              marginBottom: "24px",
+            }}
+          >
+            How To Use Your QR
+            Experience
+          </h2>
+
+          <p
+            style={{
+              maxWidth: "820px",
+              margin: "0 auto",
+              lineHeight: "1.9",
+              fontSize: "18px",
+              opacity: 0.75,
+            }}
+          >
+            After creating your
+            event, simply print your
+            QR code and place it
+            where guests can easily
+            scan it during your
+            celebration.
+          </p>
+
+          <div
+            style={{
+              marginTop: "50px",
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(auto-fit,minmax(260px,1fr))",
+              gap: "24px",
+            }}
+          >
+            <div style={cardStyle}>
+              <h3
+                style={{
+                  marginBottom:
+                    "18px",
+                  fontSize: "24px",
+                }}
+              >
+                Table QR Cards
+              </h3>
+
+              <p style={cardText}>
+                Place small printed
+                QR cards on guest
+                tables so visitors
+                can instantly upload
+                photos and leave
+                messages during your
+                event.
+              </p>
+            </div>
+
+            <div style={cardStyle}>
+              <h3
+                style={{
+                  marginBottom:
+                    "18px",
+                  fontSize: "24px",
+                }}
+              >
+                Welcome Sign
+              </h3>
+
+              <p style={cardText}>
+                Display a large QR
+                sign at your wedding
+                or event entrance so
+                guests can quickly
+                access your private
+                gallery by simply
+                scanning the code.
+              </p>
+            </div>
+
+            <div style={cardStyle}>
+              <h3
+                style={{
+                  marginBottom:
+                    "18px",
+                  fontSize: "24px",
+                }}
+              >
+                Print Options
+              </h3>
+
+              <p style={cardText}>
+                You can print your QR
+                designs at a local
+                print center, create
+                your own DIY setup,
+                or order elegant
+                acrylic and plexi
+                signage directly from
+                our Etsy store for a
+                luxury presentation.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -227,7 +359,7 @@ function LandingPage() {
       >
         © 2026 WALNORY
         <br />
-        Digital Wedding Memory
+        Digital Event Memory
         Experience
       </footer>
     </div>
