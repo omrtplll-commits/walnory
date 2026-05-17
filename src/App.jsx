@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import LandingPage from "./pages/LandingPage";
 import CreateEventPage from "./pages/CreateEventPage";
+import EventPage from "./pages/EventPage";
 
 function App() {
   const [authorized, setAuthorized] =
@@ -12,6 +13,9 @@ function App() {
 
   const [token, setToken] =
     useState("");
+
+  const [guestView, setGuestView] =
+    useState(false);
 
   const validTokens = [
     "WAL-48291",
@@ -32,8 +36,18 @@ function App() {
     }
   };
 
+  if (guestView) {
+    return <EventPage />;
+  }
+
   if (authorized) {
-    return <CreateEventPage />;
+    return (
+      <CreateEventPage
+        openGuestView={() =>
+          setGuestView(true)
+        }
+      />
+    );
   }
 
   return (

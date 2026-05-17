@@ -2,7 +2,9 @@ import { useState } from "react";
 
 import { QRCodeCanvas } from "qrcode.react";
 
-function CreateEventPage() {
+function CreateEventPage({
+  openGuestView,
+}) {
   const [eventName, setEventName] =
     useState("");
 
@@ -171,6 +173,15 @@ function CreateEventPage() {
             >
               DOWNLOAD QR
             </button>
+
+            <button
+              onClick={
+                openGuestView
+              }
+              style={buttonStyle}
+            >
+              OPEN EVENT PAGE
+            </button>
           </div>
 
           <div
@@ -213,15 +224,15 @@ function CreateEventPage() {
 
             <div style={infoCard}>
               <h3 style={infoTitle}>
-                Luxury Print Options
+                Print & Luxury
+                Options
               </h3>
 
               <p style={infoText}>
-                You can print your QR
-                designs locally,
-                create DIY table
-                cards, or order
-                premium acrylic
+                You can print simple
+                table QR cards at a
+                local print center or
+                order premium acrylic
                 welcome signs and
                 plexi table displays
                 directly from our
