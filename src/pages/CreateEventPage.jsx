@@ -1,10 +1,20 @@
 import { useState } from "react";
 
+import {
+  collection,
+  addDoc,
+} from "firebase/firestore";
+
+import { db } from "../firebase";
+
 import { QRCodeCanvas } from "qrcode.react";
 
-function CreateEventPage({
-  openGuestView,
-}) {
+import { useNavigate } from "react-router-dom";
+
+function CreateEventPage() {
+  const navigate =
+    useNavigate();
+
   const [eventName, setEventName] =
     useState("");
 
@@ -20,12 +30,55 @@ function CreateEventPage({
   const [created, setCreated] =
     useState(false);
 
-  const eventLink =
-    "https://walnory.vercel.app/event/demo";
+  const [loading, setLoading] =
+    useState(false);
 
-  const handleCreate = () => {
-    setCreated(true);
-  };
+  const [eventLink, setEventLink] =
+    useState("");
+
+  const handleCreate =
+    async () => {
+      try {
+        setLoading(true);
+
+        const docRef =
+          await addDoc(
+            collection(
+              db,
+              "events"
+            ),
+            {
+              eventName,
+              coupleNames,
+              eventDate,
+              venue,
+              createdAt:
+                new Date(),
+            }
+          );
+
+        const generatedLink = `http://localhost:5173/event/${docRef.id}`;
+
+        setEventLink(
+          generatedLink
+        );
+
+        setCreated(true);
+
+        console.log(
+          "Event saved:",
+          docRef.id
+        );
+      } catch (error) {
+        console.error(error);
+
+        alert(
+          "Firebase save error"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(
@@ -58,6 +111,16 @@ function CreateEventPage({
 
     downloadLink.click();
   };
+
+  const openEventPage =
+    () => {
+      navigate(
+        eventLink.replace(
+          "http://localhost:5173",
+          ""
+        )
+      );
+    };
 
   if (created) {
     return (
@@ -102,19 +165,6 @@ function CreateEventPage({
             Your QR Experience
             Is Ready
           </h1>
-
-          <p
-            style={{
-              opacity: 0.7,
-              lineHeight: "1.8",
-              marginBottom: "40px",
-            }}
-          >
-            Share your QR code with
-            guests and start
-            collecting beautiful
-            memories instantly.
-          </p>
 
           <div
             style={{
@@ -176,69 +226,12 @@ function CreateEventPage({
 
             <button
               onClick={
-                openGuestView
+                openEventPage
               }
               style={buttonStyle}
             >
               OPEN EVENT PAGE
             </button>
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit,minmax(240px,1fr))",
-              gap: "24px",
-              marginTop: "30px",
-            }}
-          >
-            <div style={infoCard}>
-              <h3 style={infoTitle}>
-                Table QR Cards
-              </h3>
-
-              <p style={infoText}>
-                Print small QR cards
-                and place them on
-                guest tables for easy
-                photo and message
-                sharing during your
-                event.
-              </p>
-            </div>
-
-            <div style={infoCard}>
-              <h3 style={infoTitle}>
-                Welcome Sign
-              </h3>
-
-              <p style={infoText}>
-                Display your QR code
-                on a large welcome
-                sign at the entrance
-                so guests can quickly
-                access your gallery.
-              </p>
-            </div>
-
-            <div style={infoCard}>
-              <h3 style={infoTitle}>
-                Print & Luxury
-                Options
-              </h3>
-
-              <p style={infoText}>
-                You can print simple
-                table QR cards at a
-                local print center or
-                order premium acrylic
-                welcome signs and
-                plexi table displays
-                directly from our
-                Etsy store.
-              </p>
-            </div>
           </div>
         </div>
       </div>
@@ -265,39 +258,14 @@ function CreateEventPage({
             "0 20px 50px rgba(0,0,0,0.08)",
         }}
       >
-        <div
-          style={{
-            letterSpacing: "4px",
-            fontSize: "13px",
-            opacity: 0.5,
-            marginBottom: "18px",
-          }}
-        >
-          CREATE EVENT
-        </div>
-
         <h1
           style={{
             fontSize: "52px",
-            marginBottom: "16px",
-            color: "#2d2926",
+            marginBottom: "40px",
           }}
         >
           Create Your Event
         </h1>
-
-        <p
-          style={{
-            opacity: 0.7,
-            lineHeight: "1.8",
-            marginBottom: "40px",
-          }}
-        >
-          Set up your private event
-          page and start collecting
-          beautiful memories from
-          your guests.
-        </p>
 
         <div
           style={{
@@ -353,8 +321,8 @@ function CreateEventPage({
 
           <button
             onClick={handleCreate}
+            disabled={loading}
             style={{
-              marginTop: "10px",
               padding: "20px",
               borderRadius: "18px",
               border: "none",
@@ -365,7 +333,9 @@ function CreateEventPage({
               cursor: "pointer",
             }}
           >
-            CREATE EVENT
+            {loading
+              ? "CREATING..."
+              : "CREATE EVENT"}
           </button>
         </div>
       </div>
@@ -390,23 +360,6 @@ const buttonStyle = {
   color: "white",
   cursor: "pointer",
   fontSize: "15px",
-};
-
-const infoCard = {
-  background: "#f8f5f0",
-  borderRadius: "24px",
-  padding: "30px",
-  textAlign: "left",
-};
-
-const infoTitle = {
-  marginBottom: "16px",
-  fontSize: "24px",
-};
-
-const infoText = {
-  lineHeight: "1.8",
-  opacity: 0.75,
 };
 
 export default CreateEventPage;

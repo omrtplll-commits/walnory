@@ -1,17 +1,99 @@
-import { useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  doc,
+  getDoc,
+} from "firebase/firestore";
+
+import { useParams } from "react-router-dom";
+
+import { db } from "../firebase";
 
 function EventPage() {
+  const { id } = useParams();
+
+  const [eventData, setEventData] =
+    useState(null);
+
+  const [loading, setLoading] =
+    useState(true);
+
   const [message, setMessage] =
     useState("");
 
   const [guestName, setGuestName] =
     useState("");
 
+  useEffect(() => {
+    const fetchEvent =
+      async () => {
+        try {
+          const docRef = doc(
+            db,
+            "events",
+            id
+          );
+
+          const docSnap =
+            await getDoc(
+              docRef
+            );
+
+          if (
+            docSnap.exists()
+          ) {
+            setEventData(
+              docSnap.data()
+            );
+          } else {
+            console.log(
+              "No such event"
+            );
+          }
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+    fetchEvent();
+  }, [id]);
+
   const handleUpload = () => {
     alert(
       "Memory uploaded successfully"
     );
   };
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          padding: "80px",
+          textAlign: "center",
+        }}
+      >
+        Loading event...
+      </div>
+    );
+  }
+
+  if (!eventData) {
+    return (
+      <div
+        style={{
+          padding: "80px",
+          textAlign: "center",
+        }}
+      >
+        Event not found
+      </div>
+    );
+  }
 
   return (
     <div
@@ -51,8 +133,34 @@ function EventPage() {
             color: "#2d2926",
           }}
         >
-          Emily & Daniel
+          {
+            eventData.coupleNames
+          }
         </h1>
+
+        <p
+          style={{
+            opacity: 0.7,
+            lineHeight: "1.8",
+            marginBottom: "14px",
+          }}
+        >
+          {
+            eventData.eventName
+          }
+        </p>
+
+        <p
+          style={{
+            opacity: 0.7,
+            lineHeight: "1.8",
+            marginBottom: "14px",
+          }}
+        >
+          {
+            eventData.venue
+          }
+        </p>
 
         <p
           style={{
