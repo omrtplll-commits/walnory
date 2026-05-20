@@ -1,8 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 function LandingPage() {
+  const navigate =
+    useNavigate();
+
   return (
     <div
       style={{
-        minHeight: "100vh",
         background:
           "linear-gradient(to bottom,#f8f5f0,#efe7dc)",
         color: "#2d2926",
@@ -12,265 +16,262 @@ function LandingPage() {
         style={{
           padding:
             "120px 20px 100px",
-          textAlign: "center",
-          maxWidth: "1100px",
-          margin: "0 auto",
         }}
       >
         <div
           style={{
-            letterSpacing: "4px",
-            fontSize: "13px",
-            opacity: 0.6,
-            marginBottom: "20px",
-          }}
-        >
-          DIGITAL EVENT EXPERIENCE
-        </div>
-
-        <h1
-          style={{
-            fontSize: "72px",
-            lineHeight: "1.1",
-            marginBottom: "24px",
-            fontWeight: "600",
-          }}
-        >
-          Capture Every
-          <br />
-          Special Memory
-        </h1>
-
-        <p
-          style={{
-            maxWidth: "760px",
-            margin: "0 auto",
-            fontSize: "20px",
-            lineHeight: "1.8",
-            opacity: 0.75,
-          }}
-        >
-          Guests scan your QR code,
-          upload photos, and leave
-          heartfelt messages in one
-          elegant private gallery for
-          weddings, engagements,
-          bridal showers, birthdays,
-          baby showers, and special
-          events.
-        </p>
-
-        <div
-          style={{
-            marginTop: "40px",
-            display: "flex",
-            justifyContent:
-              "center",
-            gap: "16px",
-            flexWrap: "wrap",
-          }}
-        >
-          <a
-            href="https://etsy.com"
-            target="_blank"
-            rel="noreferrer"
-            style={mainButton}
-          >
-            BUY ON ETSY
-          </a>
-
-          <button
-            style={secondaryButton}
-          >
-            HOW IT WORKS
-          </button>
-        </div>
-      </section>
-
-      <section
-        style={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          padding:
-            "40px 20px 100px",
-          display: "grid",
-          gridTemplateColumns:
-            "repeat(auto-fit,minmax(280px,1fr))",
-          gap: "24px",
-        }}
-      >
-        <div style={cardStyle}>
-          <h2 style={cardTitle}>
-            1. Purchase
-          </h2>
-
-          <p style={cardText}>
-            Purchase your digital QR
-            event package from our
-            Etsy store for weddings,
-            parties, baby showers,
-            engagements, and more.
-          </p>
-        </div>
-
-        <div style={cardStyle}>
-          <h2 style={cardTitle}>
-            2. Receive Access
-          </h2>
-
-          <p style={cardText}>
-            After your Etsy purchase,
-            send your purchase proof
-            to the email address
-            included inside your PDF
-            file. After verification,
-            you will receive your
-            private access token.
-          </p>
-        </div>
-
-        <div style={cardStyle}>
-          <h2 style={cardTitle}>
-            3. Create Event
-          </h2>
-
-          <p style={cardText}>
-            Use your token to create
-            your personalized event
-            page and generate your
-            unique QR code in
-            minutes.
-          </p>
-        </div>
-
-        <div style={cardStyle}>
-          <h2 style={cardTitle}>
-            4. Share With Guests
-          </h2>
-
-          <p style={cardText}>
-            Share your QR code with
-            guests and start
-            collecting beautiful
-            memories instantly during
-            your event.
-          </p>
-        </div>
-      </section>
-
-      <section
-        style={{
-          padding: "90px 20px",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "1100px",
+            maxWidth: "1150px",
             margin: "0 auto",
             textAlign: "center",
           }}
         >
-          <h2
+          <div
             style={{
-              fontSize: "46px",
+              letterSpacing: "5px",
+              fontSize: "13px",
+              opacity: 0.6,
               marginBottom: "24px",
             }}
           >
-            How To Use Your QR
-            Experience
-          </h2>
+            WALNORY
+          </div>
+
+          <h1
+            style={{
+              fontSize: "78px",
+              lineHeight: "1.08",
+              maxWidth: "950px",
+              margin:
+                "0 auto 30px",
+            }}
+          >
+            Turn Wedding Moments
+            Into Timeless Memories
+          </h1>
 
           <p
             style={{
-              maxWidth: "820px",
-              margin: "0 auto",
+              maxWidth: "760px",
+              margin:
+                "0 auto 45px",
+              fontSize: "20px",
               lineHeight: "1.9",
-              fontSize: "18px",
-              opacity: 0.75,
+              opacity: 0.72,
             }}
           >
-            After creating your
-            event, simply print your
-            QR code and place it
-            where guests can easily
-            scan it during your
-            celebration.
+            A luxury wedding memory
+            experience where guests
+            instantly share photos,
+            videos, and heartfelt
+            messages through a
+            beautifully designed QR
+            experience.
           </p>
 
           <div
             style={{
-              marginTop: "50px",
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit,minmax(260px,1fr))",
-              gap: "24px",
+              display: "flex",
+              justifyContent:
+                "center",
+              gap: "18px",
+              flexWrap: "wrap",
+              marginBottom: "60px",
             }}
           >
-            <div style={cardStyle}>
-              <h3
-                style={{
-                  marginBottom:
-                    "18px",
-                  fontSize: "24px",
-                }}
+            <button
+              onClick={() =>
+                navigate(
+                  "/create"
+                )
+              }
+              style={
+                primaryButton
+              }
+            >
+              CREATE EVENT
+            </button>
+
+            <button
+              style={
+                secondaryButton
+              }
+            >
+              WATCH DEMO
+            </button>
+          </div>
+
+          <div
+            style={{
+              opacity: 0.72,
+              fontSize: "16px",
+              lineHeight: "2",
+              maxWidth: "850px",
+              margin: "0 auto",
+            }}
+          >
+            Print your QR designs
+            locally or display them
+            beautifully on your
+            wedding tables with our
+            premium products.
+            <br />
+            Discover elegant card
+            prints, luxury acrylic
+            QR signs, and
+            handcrafted wooden
+            wedding displays
+            available through our
+            Etsy store.
+            <br />
+            We know your special
+            day is once in a
+            lifetime — and we
+            design every detail to
+            make those memories
+            unforgettable.
+          </div>
+        </div>
+      </section>
+
+      <section
+        style={{
+          padding:
+            "20px 20px 120px",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+          }}
+        >
+          <div
+            style={{
+              textAlign: "center",
+              marginBottom: "70px",
+            }}
+          >
+            <div
+              style={{
+                letterSpacing:
+                  "4px",
+                fontSize: "13px",
+                opacity: 0.5,
+                marginBottom:
+                  "18px",
+              }}
+            >
+              HOW IT WORKS
+            </div>
+
+            <h2
+              style={{
+                fontSize: "56px",
+              }}
+            >
+              Elegant & Effortless
+            </h2>
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(auto-fit,minmax(280px,1fr))",
+              gap: "28px",
+            }}
+          >
+            <div
+              style={cardStyle}
+            >
+              <div
+                style={numberStyle}
               >
-                Table QR Cards
+                01
+              </div>
+
+              <h3
+                style={titleStyle}
+              >
+                Purchase & Activate
               </h3>
 
-              <p style={cardText}>
-                Place small printed
-                QR cards on guest
-                tables so visitors
-                can instantly upload
-                photos and leave
-                messages during your
-                event.
+              <p
+                style={textStyle}
+              >
+                Purchase your
+                WALNORY product
+                through Etsy and
+                receive a PDF with
+                activation
+                instructions.
+                <br />
+                <br />
+                After sending your
+                purchase
+                confirmation to our
+                support email, you
+                will receive your
+                private event token
+                to activate your
+                wedding page and QR
+                experience.
               </p>
             </div>
 
-            <div style={cardStyle}>
-              <h3
-                style={{
-                  marginBottom:
-                    "18px",
-                  fontSize: "24px",
-                }}
+            <div
+              style={cardStyle}
+            >
+              <div
+                style={numberStyle}
               >
-                Welcome Sign
+                02
+              </div>
+
+              <h3
+                style={titleStyle}
+              >
+                Display Your QR
               </h3>
 
-              <p style={cardText}>
-                Display a large QR
-                sign at your wedding
-                or event entrance so
-                guests can quickly
+              <p
+                style={textStyle}
+              >
+                Place your QR card
+                or acrylic sign on
+                tables, entrances,
+                or wedding areas so
+                guests can instantly
                 access your private
-                gallery by simply
-                scanning the code.
+                memory page.
               </p>
             </div>
 
-            <div style={cardStyle}>
-              <h3
-                style={{
-                  marginBottom:
-                    "18px",
-                  fontSize: "24px",
-                }}
+            <div
+              style={cardStyle}
+            >
+              <div
+                style={numberStyle}
               >
-                Print Options
+                03
+              </div>
+
+              <h3
+                style={titleStyle}
+              >
+                Receive Memories
               </h3>
 
-              <p style={cardText}>
-                You can print your QR
-                designs at a local
-                print center, create
-                your own DIY setup,
-                or order elegant
-                acrylic and plexi
-                signage directly from
-                our Etsy store for a
-                luxury presentation.
+              <p
+                style={textStyle}
+              >
+                Guests privately
+                upload photos,
+                videos, and heartfelt
+                messages directly to
+                your personal
+                wedding memory
+                vault.
               </p>
             </div>
           </div>
@@ -279,70 +280,181 @@ function LandingPage() {
 
       <section
         style={{
-          background: "white",
           padding:
-            "90px 20px",
+            "0 20px 120px",
         }}
       >
         <div
           style={{
-            maxWidth: "1000px",
+            maxWidth: "1100px",
             margin: "0 auto",
-            textAlign: "center",
+            background: "white",
+            borderRadius: "36px",
+            padding: "70px",
+            boxShadow:
+              "0 20px 50px rgba(0,0,0,0.06)",
           }}
         >
-          <h2
+          <div
             style={{
-              fontSize: "46px",
+              letterSpacing: "4px",
+              fontSize: "13px",
+              opacity: 0.5,
               marginBottom: "20px",
             }}
           >
-            Private & Secure
+            PHYSICAL PRODUCTS
+          </div>
+
+          <h2
+            style={{
+              fontSize: "54px",
+              marginBottom: "30px",
+            }}
+          >
+            Elegant Wedding QR
+            Displays
           </h2>
 
           <p
             style={{
-              maxWidth: "760px",
-              margin: "0 auto",
-              lineHeight: "1.9",
+              lineHeight: "2",
+              opacity: 0.72,
               fontSize: "18px",
-              opacity: 0.75,
+              marginBottom: "26px",
             }}
           >
-            All uploaded photos and
-            messages are privately
-            stored and only visible
-            to the event owner.
-            Walnory does not publish
-            guest content publicly or
-            index event galleries in
-            search engines.
+            WALNORY experiences can
+            be used with printable
+            wedding cards, luxury
+            acrylic table signs,
+            welcome boards, or
+            framed displays.
           </p>
+
+          <p
+            style={{
+              lineHeight: "2",
+              opacity: 0.72,
+              fontSize: "18px",
+            }}
+          >
+            You can print your QR
+            designs locally or
+            order professionally
+            designed products
+            directly through our
+            Etsy store.
+          </p>
+        </div>
+      </section>
+
+      <section
+        style={{
+          padding:
+            "0 20px 120px",
+        }}
+      >
+        <div
+          style={{
+            maxWidth: "1100px",
+            margin: "0 auto",
+          }}
+        >
+          <div
+            style={{
+              textAlign: "center",
+              marginBottom: "60px",
+            }}
+          >
+            <div
+              style={{
+                letterSpacing:
+                  "4px",
+                fontSize: "13px",
+                opacity: 0.5,
+                marginBottom:
+                  "18px",
+              }}
+            >
+              PRIVACY & TRUST
+            </div>
+
+            <h2
+              style={{
+                fontSize: "56px",
+              }}
+            >
+              Your Memories Stay
+              Private
+            </h2>
+          </div>
 
           <div
             style={{
-              marginTop: "40px",
-              display: "flex",
-              justifyContent:
-                "center",
-              gap: "16px",
-              flexWrap: "wrap",
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(auto-fit,minmax(300px,1fr))",
+              gap: "28px",
             }}
           >
-            <div style={badgeStyle}>
-              Private Event Access
+            <div
+              style={cardStyle}
+            >
+              <h3
+                style={titleStyle}
+              >
+                Private Uploads
+              </h3>
+
+              <p
+                style={textStyle}
+              >
+                Uploaded photos,
+                videos, and messages
+                are only visible to
+                the event owner.
+              </p>
             </div>
 
-            <div style={badgeStyle}>
-              Secure Cloud Storage
+            <div
+              style={cardStyle}
+            >
+              <h3
+                style={titleStyle}
+              >
+                Hidden Event Pages
+              </h3>
+
+              <p
+                style={textStyle}
+              >
+                Event pages are not
+                indexed by search
+                engines and remain
+                private to your
+                guests.
+              </p>
             </div>
 
-            <div style={badgeStyle}>
-              No Public Indexing
-            </div>
+            <div
+              style={cardStyle}
+            >
+              <h3
+                style={titleStyle}
+              >
+                Secure Memory Vault
+              </h3>
 
-            <div style={badgeStyle}>
-              KVKK Friendly
+              <p
+                style={textStyle}
+              >
+                Your wedding
+                memories are safely
+                stored in your
+                private WALNORY
+                gallery experience.
+              </p>
             </div>
           </div>
         </div>
@@ -350,64 +462,109 @@ function LandingPage() {
 
       <footer
         style={{
+          borderTop:
+            "1px solid rgba(0,0,0,0.08)",
           padding:
-            "50px 20px",
-          textAlign: "center",
-          opacity: 0.6,
-          fontSize: "14px",
+            "40px 20px 60px",
         }}
       >
-        © 2026 WALNORY
-        <br />
-        Digital Event Memory
-        Experience
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+            display: "flex",
+            justifyContent:
+              "space-between",
+            flexWrap: "wrap",
+            gap: "20px",
+          }}
+        >
+          <div
+            style={{
+              opacity: 0.7,
+            }}
+          >
+            © WALNORY
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              gap: "24px",
+              flexWrap: "wrap",
+              opacity: 0.7,
+              fontSize: "14px",
+            }}
+          >
+            <span>
+              Privacy Policy
+            </span>
+
+            <span>
+              Terms of Service
+            </span>
+
+            <span>KVKK</span>
+
+            <span>
+              Contact
+            </span>
+
+            <span>Etsy</span>
+          </div>
+        </div>
       </footer>
     </div>
   );
 }
 
-const mainButton = {
-  padding: "18px 34px",
+const primaryButton = {
+  padding: "20px 34px",
+  borderRadius: "20px",
+  border: "none",
   background: "#2d2926",
   color: "white",
-  borderRadius: "18px",
-  textDecoration: "none",
   fontSize: "15px",
   letterSpacing: "1px",
+  cursor: "pointer",
 };
 
 const secondaryButton = {
-  padding: "18px 34px",
+  padding: "20px 34px",
+  borderRadius: "20px",
+  border: "1px solid #d8cec2",
   background: "transparent",
-  border: "1px solid #2d2926",
-  borderRadius: "18px",
+  color: "#2d2926",
   fontSize: "15px",
+  letterSpacing: "1px",
   cursor: "pointer",
 };
 
 const cardStyle = {
   background: "white",
-  borderRadius: "28px",
-  padding: "36px",
+  padding: "40px",
+  borderRadius: "30px",
   boxShadow:
     "0 15px 40px rgba(0,0,0,0.06)",
 };
 
-const cardTitle = {
-  marginBottom: "18px",
-  fontSize: "28px",
-};
-
-const cardText = {
-  lineHeight: "1.8",
-  opacity: 0.75,
-};
-
-const badgeStyle = {
-  padding: "14px 22px",
-  borderRadius: "999px",
-  background: "#f5f1eb",
+const numberStyle = {
   fontSize: "14px",
+  letterSpacing: "3px",
+  opacity: 0.45,
+  marginBottom: "22px",
+};
+
+const titleStyle = {
+  fontSize: "30px",
+  marginBottom: "18px",
+  color: "#2d2926",
+};
+
+const textStyle = {
+  lineHeight: "1.9",
+  opacity: 0.72,
+  fontSize: "16px",
 };
 
 export default LandingPage;
