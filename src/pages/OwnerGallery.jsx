@@ -5,156 +5,353 @@ import { useParams } from "react-router-dom";
 import {
   collection,
   query,
-  orderBy,
+  where,
   onSnapshot,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
 
 function OwnerGallery() {
-  const { token } = useParams();
+  const { ownerId } =
+    useParams();
 
-  const [messages, setMessages] =
+  const [memories, setMemories] =
     useState([]);
 
   const [selectedImage, setSelectedImage] =
     useState("");
 
   useEffect(() => {
-    const q = query(
-      collection(
-        db,
-        "events",
-        token,
-        "messages"
-      ),
-      orderBy("createdAt", "desc")
+    const eventQuery = query(
+      collection(db, "events"),
+      where(
+        "ownerId",
+        "==",
+        ownerId
+      )
     );
 
-    const unsubscribe =
-      onSnapshot(q, (snapshot) => {
-        const items = snapshot.docs.map(
-          (doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })
-        );
+    const unsubscribeEvents =
+      onSnapshot(
+        eventQuery,
+        (eventSnapshot) => {
+          if (
+            eventSnapshot.empty
+          ) {
+            return;
+          }
 
-        setMessages(items);
-      });
+          const eventId =
+            eventSnapshot.docs[0].id;
 
-    return () => unsubscribe();
-  }, []);
+          const memoriesQuery =
+            query(
+              collection(
+                db,
+                "memories"
+              ),
+              where(
+                "eventId",
+                "==",
+                eventId
+              )
+            );
 
-  const downloadImage = (
+          const unsubscribeMemories =
+            onSnapshot(
+              memoriesQuery,
+              (
+                memoriesSnapshot
+              ) => {
+                const items =
+                  memoriesSnapshot.docs.map(
+                    (doc) => ({
+                      id: doc.id,
+                      ...doc.data(),
+                    })
+                  );
+
+                setMemories(
+                  items
+                );
+              }
+            );
+
+          return () =>
+            unsubscribeMemories();
+        }
+      );
+
+    return () =>
+      unsubscribeEvents();
+  }, [ownerId]);
+
+  const downloadFile = (
     url
   ) => {
-    const newTab =
-      window.open(url, "_blank");
+    const link =
+      document.createElement(
+        "a"
+      );
 
-    if (newTab) {
-      newTab.focus();
-    }
+    link.href = url;
+
+    link.setAttribute(
+      "download",
+      "walnory-memory"
+    );
+
+    document.body.appendChild(
+      link
+    );
+
+    link.click();
+
+    link.remove();
   };
 
   return (
     <div
       style={{
         minHeight: "100vh",
-        background: "#f5f1eb",
-        padding: "40px",
+        background:
+          "linear-gradient(to bottom,#f8f5f0,#efe7dc)",
+        padding: "40px 16px",
       }}
     >
-      <h1
-        style={{
-          textAlign: "center",
-          marginBottom: "40px",
-          fontSize: "42px",
-        }}
-      >
-        Owner Gallery
-      </h1>
-
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns:
-            "repeat(auto-fit,minmax(300px,1fr))",
-          gap: "24px",
+          maxWidth: "1400px",
+          margin: "0 auto",
         }}
       >
-        {messages.map((item) => (
+        <div
+          style={{
+            textAlign: "center",
+            marginBottom: "50px",
+          }}
+        >
           <div
-            key={item.id}
             style={{
-              background: "white",
-              padding: "20px",
-              borderRadius: "20px",
-              boxShadow:
-                "0 10px 25px rgba(0,0,0,0.08)",
+              letterSpacing:
+                "4px",
+              fontSize: "12px",
+              opacity: 0.5,
+              marginBottom:
+                "14px",
             }}
           >
-            {item.imageUrl && (
-              <>
-                <img
-                  src={item.imageUrl}
-                  alt=""
-                  onClick={() =>
-                    setSelectedImage(
-                      item.imageUrl
-                    )
-                  }
-                  style={{
-                    width: "100%",
-                    maxHeight: "220px",
-                    objectFit: "contain",
-                    background: "#f3f3f3",
-                    borderRadius: "16px",
-                    marginBottom: "16px",
-                    cursor: "pointer",
-                  }}
-                />
+            PRIVATE OWNER GALLERY
+          </div>
 
-                <button
-                  onClick={() =>
-                    downloadImage(
-                      item.imageUrl
-                    )
-                  }
+          <h1
+            style={{
+              fontSize: "56px",
+              color: "#2d2926",
+              marginBottom: "18px",
+            }}
+          >
+            Your Wedding Memories
+          </h1>
+
+          <p
+            style={{
+              opacity: 0.7,
+              maxWidth: "700px",
+              margin: "0 auto",
+              lineHeight: "1.8",
+            }}
+          >
+            All uploaded guest
+            photos, videos, and
+            messages appear here
+            privately for the
+            event owner.
+          </p>
+        </div>
+
+        {memories.length ===
+        0 ? (
+          <div
+            style={{
+              background:
+                "white",
+              borderRadius:
+                "30px",
+              padding: "60px",
+              textAlign:
+                "center",
+            }}
+          >
+            No memories uploaded
+            yet.
+          </div>
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns:
+                "repeat(auto-fit,minmax(240px,1fr))",
+              gap: "20px",
+            }}
+          >
+            {memories.map(
+              (item) => (
+                <div
+                  key={item.id}
                   style={{
-                    width: "100%",
-                    padding: "12px",
-                    border: "none",
-                    borderRadius: "12px",
-                    background: "#222",
-                    color: "white",
-                    marginBottom: "16px",
-                    cursor: "pointer",
+                    background:
+                      "white",
+                    borderRadius:
+                      "24px",
+                    overflow:
+                      "hidden",
+                    boxShadow:
+                      "0 10px 30px rgba(0,0,0,0.06)",
                   }}
                 >
-                  OPEN FULL PHOTO
-                </button>
-              </>
+                  {item.fileUrl &&
+                    item.fileType ===
+                      "image" && (
+                      <div
+                        style={{
+                          height:
+                            "220px",
+                          background:
+                            "#f3f3f3",
+                          display:
+                            "flex",
+                          alignItems:
+                            "center",
+                          justifyContent:
+                            "center",
+                          padding:
+                            "12px",
+                        }}
+                      >
+                        <img
+                          src={
+                            item.fileUrl
+                          }
+                          alt=""
+                          onClick={() =>
+                            setSelectedImage(
+                              item.fileUrl
+                            )
+                          }
+                          style={{
+                            maxWidth:
+                              "100%",
+                            maxHeight:
+                              "100%",
+                            objectFit:
+                              "contain",
+                            cursor:
+                              "pointer",
+                            borderRadius:
+                              "14px",
+                          }}
+                        />
+                      </div>
+                    )}
+
+                  {item.fileUrl &&
+                    item.fileType ===
+                      "video" && (
+                      <video
+                        controls
+                        style={{
+                          width:
+                            "100%",
+                          height:
+                            "220px",
+                          objectFit:
+                            "cover",
+                          background:
+                            "#000",
+                        }}
+                      >
+                        <source
+                          src={
+                            item.fileUrl
+                          }
+                        />
+                      </video>
+                    )}
+
+                  <div
+                    style={{
+                      padding:
+                        "18px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontSize:
+                          "12px",
+                        opacity:
+                          0.45,
+                        marginBottom:
+                          "8px",
+                        letterSpacing:
+                          "2px",
+                      }}
+                    >
+                      GUEST
+                    </div>
+
+                    <h3
+                      style={{
+                        fontSize:
+                          "24px",
+                        marginBottom:
+                          "14px",
+                        color:
+                          "#2d2926",
+                      }}
+                    >
+                      {
+                        item.guestName
+                      }
+                    </h3>
+
+                    <p
+                      style={{
+                        lineHeight:
+                          "1.8",
+                        opacity:
+                          0.72,
+                        marginBottom:
+                          "18px",
+                        fontSize:
+                          "15px",
+                      }}
+                    >
+                      {
+                        item.message
+                      }
+                    </p>
+
+                    {item.fileUrl && (
+                      <button
+                        onClick={() =>
+                          downloadFile(
+                            item.fileUrl
+                          )
+                        }
+                        style={
+                          buttonStyle
+                        }
+                      >
+                        OPEN FULL SIZE
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )
             )}
-
-            <h3
-              style={{
-                marginBottom: "10px",
-              }}
-            >
-              {item.name}
-            </h3>
-
-            <p
-              style={{
-                lineHeight: "1.6",
-                opacity: 0.8,
-              }}
-            >
-              {item.message}
-            </p>
           </div>
-        ))}
+        )}
       </div>
 
       {selectedImage && (
@@ -163,14 +360,17 @@ function OwnerGallery() {
             setSelectedImage("")
           }
           style={{
-            position: "fixed",
+            position:
+              "fixed",
             inset: 0,
             background:
-              "rgba(0,0,0,0.8)",
+              "rgba(0,0,0,0.85)",
             display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "40px",
+            justifyContent:
+              "center",
+            alignItems:
+              "center",
+            padding: "30px",
             zIndex: 999,
           }}
         >
@@ -179,8 +379,10 @@ function OwnerGallery() {
             alt=""
             style={{
               maxWidth: "90%",
-              maxHeight: "90%",
-              borderRadius: "20px",
+              maxHeight:
+                "90%",
+              borderRadius:
+                "20px",
             }}
           />
         </div>
@@ -188,5 +390,16 @@ function OwnerGallery() {
     </div>
   );
 }
+
+const buttonStyle = {
+  width: "100%",
+  padding: "14px",
+  borderRadius: "14px",
+  border: "none",
+  background: "#2d2926",
+  color: "white",
+  cursor: "pointer",
+  fontSize: "14px",
+};
 
 export default OwnerGallery;

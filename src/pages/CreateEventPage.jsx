@@ -3,6 +3,9 @@ import { useState } from "react";
 import {
   collection,
   addDoc,
+  doc,
+  getDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 import { db } from "../firebase";
@@ -11,9 +14,14 @@ import { QRCodeCanvas } from "qrcode.react";
 
 import { useNavigate } from "react-router-dom";
 
+import generateMemoryPdf from "../utils/generateMemoryPdf";
+
 function CreateEventPage() {
   const navigate =
     useNavigate();
+
+  const [token, setToken] =
+    useState("");
 
   const [eventName, setEventName] =
     useState("");
@@ -36,10 +44,66 @@ function CreateEventPage() {
   const [eventLink, setEventLink] =
     useState("");
 
+  const [ownerLink, setOwnerLink] =
+    useState("");
+
   const handleCreate =
     async () => {
       try {
         setLoading(true);
+
+        const tokenRef = doc(
+          db,
+          "tokens",
+          token
+        );
+
+        const tokenSnap =
+          await getDoc(
+            tokenRef
+          );
+
+        if (
+          !tokenSnap.exists()
+        ) {
+          alert(
+            "Invalid token"
+          );
+
+          setLoading(false);
+
+          return;
+        }
+
+        const tokenData =
+          tokenSnap.data();
+
+        if (
+          tokenData.used
+        ) {
+          alert(
+            "This token has already been used"
+          );
+
+          setLoading(false);
+
+          return;
+        }
+
+        if (
+          !tokenData.active
+        ) {
+          alert(
+            "Inactive token"
+          );
+
+          setLoading(false);
+
+          return;
+        }
+
+        const ownerId =
+          crypto.randomUUID();
 
         const docRef =
           await addDoc(
@@ -48,6 +112,8 @@ function CreateEventPage() {
               "events"
             ),
             {
+              token,
+              ownerId,
               eventName,
               coupleNames,
               eventDate,
@@ -57,10 +123,23 @@ function CreateEventPage() {
             }
           );
 
+        await updateDoc(
+          tokenRef,
+          {
+            used: true,
+          }
+        );
+
         const generatedLink = `http://localhost:5173/event/${docRef.id}`;
+
+        const generatedOwnerLink = `http://localhost:5173/owner/${ownerId}`;
 
         setEventLink(
           generatedLink
+        );
+
+        setOwnerLink(
+          generatedOwnerLink
         );
 
         setCreated(true);
@@ -80,12 +159,14 @@ function CreateEventPage() {
       }
     };
 
-  const handleCopy = () => {
+  const handleCopy = (
+    value
+  ) => {
     navigator.clipboard.writeText(
-      eventLink
+      value
     );
 
-    alert("Link copied");
+    alert("Copied");
   };
 
   const handleDownload = () => {
@@ -122,6 +203,17 @@ function CreateEventPage() {
       );
     };
 
+  const handlePdfDownload =
+    () => {
+      generateMemoryPdf({
+        coupleNames,
+        eventDate,
+        guestLink:
+          eventLink,
+        ownerLink,
+      });
+    };
+
   if (created) {
     return (
       <div
@@ -134,7 +226,7 @@ function CreateEventPage() {
       >
         <div
           style={{
-            maxWidth: "850px",
+            maxWidth: "900px",
             margin: "0 auto",
             background: "white",
             borderRadius: "32px",
@@ -162,9 +254,25 @@ function CreateEventPage() {
               color: "#2d2926",
             }}
           >
-            Your QR Experience
-            Is Ready
+            Your WALNORY
+            Experience Is Ready
           </h1>
+
+          <p
+            style={{
+              opacity: 0.7,
+              lineHeight: "1.8",
+              marginBottom: "40px",
+            }}
+          >
+            Please save your
+            private owner link
+            securely. This link
+            gives access to all
+            uploaded guest photos,
+            videos, and messages
+            after your event.
+          </p>
 
           <div
             style={{
@@ -187,15 +295,62 @@ function CreateEventPage() {
 
           <div
             style={{
-              background: "#f8f5f0",
-              padding: "18px",
-              borderRadius: "18px",
               marginBottom: "20px",
-              wordBreak:
-                "break-all",
             }}
           >
-            {eventLink}
+            <div
+              style={{
+                fontSize: "14px",
+                opacity: 0.5,
+                marginBottom: "10px",
+              }}
+            >
+              GUEST EVENT LINK
+            </div>
+
+            <div
+              style={{
+                background:
+                  "#f8f5f0",
+                padding: "18px",
+                borderRadius:
+                  "18px",
+                wordBreak:
+                  "break-all",
+              }}
+            >
+              {eventLink}
+            </div>
+          </div>
+
+          <div
+            style={{
+              marginBottom: "40px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "14px",
+                opacity: 0.5,
+                marginBottom: "10px",
+              }}
+            >
+              PRIVATE OWNER LINK
+            </div>
+
+            <div
+              style={{
+                background:
+                  "#f8f5f0",
+                padding: "18px",
+                borderRadius:
+                  "18px",
+                wordBreak:
+                  "break-all",
+              }}
+            >
+              {ownerLink}
+            </div>
           </div>
 
           <div
@@ -205,14 +360,28 @@ function CreateEventPage() {
               justifyContent:
                 "center",
               flexWrap: "wrap",
-              marginBottom: "50px",
             }}
           >
             <button
-              onClick={handleCopy}
+              onClick={() =>
+                handleCopy(
+                  eventLink
+                )
+              }
               style={buttonStyle}
             >
-              COPY LINK
+              COPY EVENT LINK
+            </button>
+
+            <button
+              onClick={() =>
+                handleCopy(
+                  ownerLink
+                )
+              }
+              style={buttonStyle}
+            >
+              COPY OWNER LINK
             </button>
 
             <button
@@ -222,6 +391,15 @@ function CreateEventPage() {
               style={buttonStyle}
             >
               DOWNLOAD QR
+            </button>
+
+            <button
+              onClick={
+                handlePdfDownload
+              }
+              style={buttonStyle}
+            >
+              DOWNLOAD PDF
             </button>
 
             <button
@@ -275,6 +453,17 @@ function CreateEventPage() {
             gap: "20px",
           }}
         >
+          <input
+            placeholder="Activation Token"
+            value={token}
+            onChange={(e) =>
+              setToken(
+                e.target.value
+              )
+            }
+            style={inputStyle}
+          />
+
           <input
             placeholder="Event Name"
             value={eventName}

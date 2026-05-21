@@ -9,6 +9,8 @@ import CreateEventPage from "./pages/CreateEventPage";
 
 import EventPage from "./pages/EventPage";
 
+import OwnerGallery from "./pages/OwnerGallery";
+
 function App() {
   return (
     <Routes>
@@ -27,6 +29,13 @@ function App() {
       <Route
         path="/event/:id"
         element={<EventPage />}
+      />
+
+      <Route
+        path="/owner/:ownerId"
+        element={
+          <OwnerGallery />
+        }
       />
     </Routes>
   );
