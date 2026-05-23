@@ -136,6 +136,8 @@ function EventPage() {
       try {
         setUploading(true);
 
+        const uploadedFiles = [];
+
         for (const file of selectedFiles) {
           const storageRef =
             ref(
@@ -155,27 +157,32 @@ function EventPage() {
               storageRef
             );
 
-          await addDoc(
-            collection(
-              db,
-              "memories"
-            ),
-            {
-              eventId: id,
-              guestName,
-              message,
-              fileUrl,
-              fileType:
-                file.type.startsWith(
-                  "video/"
-                )
-                  ? "video"
-                  : "image",
-              createdAt:
-                new Date(),
-            }
-          );
+          uploadedFiles.push({
+            url: fileUrl,
+            type:
+              file.type.startsWith(
+                "video/"
+              )
+                ? "video"
+                : "image",
+          });
         }
+
+        await addDoc(
+          collection(
+            db,
+            "memories"
+          ),
+          {
+            eventId: id,
+            guestName,
+            message,
+            files:
+              uploadedFiles,
+            createdAt:
+              new Date(),
+          }
+        );
 
         setUploaded(true);
 
@@ -199,8 +206,13 @@ function EventPage() {
     return (
       <div
         style={{
-          padding: "80px",
-          textAlign: "center",
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent:
+            "center",
+          background:
+            "linear-gradient(to bottom,#f8f5f0,#efe7dc)",
         }}
       >
         Loading event...
@@ -212,8 +224,13 @@ function EventPage() {
     return (
       <div
         style={{
-          padding: "80px",
-          textAlign: "center",
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent:
+            "center",
+          background:
+            "linear-gradient(to bottom,#f8f5f0,#efe7dc)",
         }}
       >
         Event not found
@@ -227,82 +244,108 @@ function EventPage() {
         minHeight: "100vh",
         background:
           "linear-gradient(to bottom,#f8f5f0,#efe7dc)",
-        padding: "50px 20px",
+        padding: "16px",
+        overflowX: "hidden",
+        boxSizing:
+          "border-box",
       }}
     >
       <div
         style={{
-          maxWidth: "850px",
+          width: "100%",
+          maxWidth: "680px",
           margin: "0 auto",
           background: "white",
-          borderRadius: "32px",
-          padding: "50px",
+          borderRadius: "26px",
+          padding: "22px",
           boxShadow:
             "0 20px 50px rgba(0,0,0,0.08)",
+          boxSizing:
+            "border-box",
+          overflow: "hidden",
         }}
       >
         <div
           style={{
-            letterSpacing: "4px",
-            fontSize: "13px",
-            opacity: 0.5,
-            marginBottom: "18px",
+            textAlign: "center",
+            marginBottom: "26px",
           }}
         >
-          PRIVATE EVENT
+          <div
+            style={{
+              letterSpacing: "4px",
+              fontSize: "11px",
+              opacity: 0.5,
+              marginBottom: "12px",
+            }}
+          >
+            PRIVATE EVENT
+          </div>
+
+          <h1
+            style={{
+              fontSize:
+                "clamp(32px,8vw,54px)",
+              lineHeight: "1.08",
+              marginBottom: "12px",
+              color: "#2d2926",
+              wordBreak:
+                "break-word",
+            }}
+          >
+            {
+              eventData.coupleNames
+            }
+          </h1>
+
+          <p
+            style={{
+              opacity: 0.7,
+              marginBottom: "5px",
+              fontSize:
+                "15px",
+              wordBreak:
+                "break-word",
+            }}
+          >
+            {
+              eventData.eventName
+            }
+          </p>
+
+          <p
+            style={{
+              opacity: 0.6,
+              fontSize:
+                "14px",
+              wordBreak:
+                "break-word",
+            }}
+          >
+            {
+              eventData.venue
+            }
+          </p>
         </div>
-
-        <h1
-          style={{
-            fontSize: "52px",
-            marginBottom: "16px",
-            color: "#2d2926",
-          }}
-        >
-          {
-            eventData.coupleNames
-          }
-        </h1>
-
-        <p
-          style={{
-            opacity: 0.7,
-            marginBottom: "12px",
-          }}
-        >
-          {
-            eventData.eventName
-          }
-        </p>
-
-        <p
-          style={{
-            opacity: 0.7,
-            marginBottom: "50px",
-          }}
-        >
-          {
-            eventData.venue
-          }
-        </p>
 
         {uploaded ? (
           <div
             style={{
               background:
                 "#f8f5f0",
-              padding: "50px",
+              padding: "30px 20px",
               borderRadius:
-                "28px",
+                "22px",
               textAlign:
                 "center",
             }}
           >
             <h2
               style={{
-                fontSize: "40px",
+                fontSize:
+                  "36px",
                 marginBottom:
-                  "18px",
+                  "16px",
                 color:
                   "#2d2926",
               }}
@@ -313,20 +356,16 @@ function EventPage() {
             <p
               style={{
                 lineHeight:
-                  "1.9",
-                opacity: 0.7,
+                  "1.8",
+                opacity: 0.72,
                 fontSize:
-                  "17px",
+                  "15px",
               }}
             >
               Your memories have
               been successfully
               shared with the
               couple.
-              <br />
-              Thank you for being
-              part of this special
-              day.
             </p>
           </div>
         ) : (
@@ -335,7 +374,7 @@ function EventPage() {
               display: "flex",
               flexDirection:
                 "column",
-              gap: "20px",
+              gap: "14px",
             }}
           >
             <input
@@ -357,7 +396,7 @@ function EventPage() {
                   e.target.value
                 )
               }
-              rows={6}
+              rows={4}
               style={{
                 ...inputStyle,
                 resize:
@@ -365,52 +404,102 @@ function EventPage() {
               }}
             />
 
-            <input
-              type="file"
-              accept="image/*,video/*"
-              multiple
-              onChange={
-                handleFileChange
-              }
-              style={inputStyle}
-            />
-
             <div
               style={{
                 background:
                   "#f8f5f0",
-                padding:
-                  "18px",
                 borderRadius:
-                  "18px",
-                lineHeight:
-                  "1.8",
-                fontSize:
-                  "14px",
-                color:
-                  "#5c544d",
+                  "20px",
+                padding: "18px",
+                border:
+                  "2px dashed #d8cec2",
+                overflow:
+                  "hidden",
               }}
             >
-              • Upload up to 5
-              photos
-              <br />
-              • 1 short video
-              allowed
-              <br />
-              • Recommended video
-              length: 15-20 seconds
-              <br />
-              • Your memories will
-              be shared privately
-              with the couple
-              <br />
-              • Selected files:
-              {" "}
-              <strong>
-                {
-                  selectedFiles.length
+              <input
+                type="file"
+                accept="image/*,video/*"
+                multiple
+                onChange={
+                  handleFileChange
                 }
-              </strong>
+                style={{
+                  width: "100%",
+                  marginBottom:
+                    "14px",
+                }}
+              />
+
+              <div
+                style={{
+                  lineHeight:
+                    "1.8",
+                  fontSize:
+                    "13px",
+                  color:
+                    "#5c544d",
+                }}
+              >
+                • Upload up to 5
+                photos
+                <br />
+                • 1 short video
+                allowed
+                <br />
+                • Recommended video
+                length: 15-20 seconds
+                <br />
+                • Shared privately
+                with the couple
+              </div>
+
+              {selectedFiles.length >
+                0 && (
+                <div
+                  style={{
+                    marginTop:
+                      "16px",
+                    display: "flex",
+                    flexDirection:
+                      "column",
+                    gap: "8px",
+                  }}
+                >
+                  {selectedFiles.map(
+                    (
+                      file,
+                      index
+                    ) => (
+                      <div
+                        key={
+                          index
+                        }
+                        style={{
+                          background:
+                            "white",
+                          padding:
+                            "10px",
+                          borderRadius:
+                            "12px",
+                          fontSize:
+                            "12px",
+                          overflow:
+                            "hidden",
+                          textOverflow:
+                            "ellipsis",
+                          whiteSpace:
+                            "nowrap",
+                        }}
+                      >
+                        {
+                          file.name
+                        }
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
             </div>
 
             <button
@@ -419,7 +508,7 @@ function EventPage() {
               }
               disabled={uploading}
               style={{
-                padding: "20px",
+                padding: "18px",
                 borderRadius:
                   "18px",
                 border: "none",
@@ -427,9 +516,12 @@ function EventPage() {
                   "#2d2926",
                 color: "white",
                 fontSize:
-                  "16px",
+                  "14px",
+                letterSpacing:
+                  "1px",
                 cursor:
                   "pointer",
+                width: "100%",
               }}
             >
               {uploading
@@ -445,11 +537,12 @@ function EventPage() {
 
 const inputStyle = {
   width: "100%",
-  padding: "18px",
-  borderRadius: "18px",
+  padding: "15px",
+  borderRadius: "15px",
   border: "1px solid #ddd",
-  fontSize: "16px",
+  fontSize: "15px",
   boxSizing: "border-box",
+  background: "#fff",
 };
 
 export default EventPage;

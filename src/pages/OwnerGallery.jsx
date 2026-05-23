@@ -18,8 +18,8 @@ function OwnerGallery() {
   const [memories, setMemories] =
     useState([]);
 
-  const [selectedImage, setSelectedImage] =
-    useState("");
+  const [selectedMedia, setSelectedMedia] =
+    useState(null);
 
   useEffect(() => {
     const eventQuery = query(
@@ -86,29 +86,97 @@ function OwnerGallery() {
       unsubscribeEvents();
   }, [ownerId]);
 
-  const downloadFile = (
-    url
-  ) => {
-    const link =
-      document.createElement(
-        "a"
+  const downloadFile =
+    async (
+      url,
+      fileName
+    ) => {
+      try {
+        const response =
+          await fetch(url, {
+            mode: "cors",
+          });
+
+        const blob =
+          await response.blob();
+
+        const blobUrl =
+          URL.createObjectURL(
+            blob
+          );
+
+        const a =
+          document.createElement(
+            "a"
+          );
+
+        a.href =
+          blobUrl;
+
+        a.download =
+          fileName;
+
+        document.body.appendChild(
+          a
+        );
+
+        a.click();
+
+        document.body.removeChild(
+          a
+        );
+
+        URL.revokeObjectURL(
+          blobUrl
+        );
+      } catch (error) {
+        console.error(error);
+
+        alert(
+          "Download failed"
+        );
+      }
+    };
+
+  const downloadMessage =
+    (memory) => {
+      const text =
+        `Guest: ${memory.guestName}
+
+Message:
+${memory.message}`;
+
+      const blob =
+        new Blob([text], {
+          type: "text/plain",
+        });
+
+      const url =
+        URL.createObjectURL(
+          blob
+        );
+
+      const link =
+        document.createElement(
+          "a"
+        );
+
+      link.href = url;
+
+      link.download = `${memory.guestName}-message.txt`;
+
+      document.body.appendChild(
+        link
       );
 
-    link.href = url;
+      link.click();
 
-    link.setAttribute(
-      "download",
-      "walnory-memory"
-    );
+      link.remove();
 
-    document.body.appendChild(
-      link
-    );
-
-    link.click();
-
-    link.remove();
-  };
+      URL.revokeObjectURL(
+        url
+      );
+    };
 
   return (
     <div
@@ -116,19 +184,19 @@ function OwnerGallery() {
         minHeight: "100vh",
         background:
           "linear-gradient(to bottom,#f8f5f0,#efe7dc)",
-        padding: "40px 16px",
+        padding: "24px 14px",
       }}
     >
       <div
         style={{
-          maxWidth: "1400px",
+          maxWidth: "1100px",
           margin: "0 auto",
         }}
       >
         <div
           style={{
             textAlign: "center",
-            marginBottom: "50px",
+            marginBottom: "40px",
           }}
         >
           <div
@@ -138,7 +206,7 @@ function OwnerGallery() {
               fontSize: "12px",
               opacity: 0.5,
               marginBottom:
-                "14px",
+                "12px",
             }}
           >
             PRIVATE OWNER GALLERY
@@ -146,12 +214,15 @@ function OwnerGallery() {
 
           <h1
             style={{
-              fontSize: "56px",
+              fontSize:
+                "clamp(36px,8vw,68px)",
+              marginBottom:
+                "18px",
               color: "#2d2926",
-              marginBottom: "18px",
             }}
           >
-            Your Wedding Memories
+            Your Wedding
+            Memories
           </h1>
 
           <p
@@ -170,236 +241,283 @@ function OwnerGallery() {
           </p>
         </div>
 
-        {memories.length ===
-        0 ? (
-          <div
-            style={{
-              background:
-                "white",
-              borderRadius:
-                "30px",
-              padding: "60px",
-              textAlign:
-                "center",
-            }}
-          >
-            No memories uploaded
-            yet.
-          </div>
-        ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                "repeat(auto-fit,minmax(240px,1fr))",
-              gap: "20px",
-            }}
-          >
-            {memories.map(
-              (item) => (
+        <div
+          style={{
+            display: "flex",
+            flexDirection:
+              "column",
+            gap: "18px",
+          }}
+        >
+          {memories.map(
+            (memory) => (
+              <div
+                key={memory.id}
+                style={{
+                  background:
+                    "white",
+                  borderRadius:
+                    "24px",
+                  padding: "22px",
+                  display: "grid",
+                  gridTemplateColumns:
+                    "1fr 320px",
+                  gap: "24px",
+                  alignItems:
+                    "start",
+                  boxShadow:
+                    "0 10px 30px rgba(0,0,0,0.05)",
+                }}
+              >
+                <div>
+                  <div
+                    style={{
+                      fontSize:
+                        "11px",
+                      letterSpacing:
+                        "2px",
+                      opacity: 0.45,
+                      marginBottom:
+                        "10px",
+                    }}
+                  >
+                    GUEST
+                  </div>
+
+                  <h2
+                    style={{
+                      fontSize:
+                        "34px",
+                      color:
+                        "#2d2926",
+                      marginBottom:
+                        "14px",
+                    }}
+                  >
+                    {
+                      memory.guestName
+                    }
+                  </h2>
+
+                  <p
+                    style={{
+                      lineHeight:
+                        "1.8",
+                      opacity: 0.75,
+                      marginBottom:
+                        "20px",
+                    }}
+                  >
+                    {
+                      memory.message
+                    }
+                  </p>
+
+                  <button
+                    onClick={() =>
+                      downloadMessage(
+                        memory
+                      )
+                    }
+                    style={{
+                      border:
+                        "none",
+                      background:
+                        "#2d2926",
+                      color:
+                        "white",
+                      padding:
+                        "12px 18px",
+                      borderRadius:
+                        "14px",
+                      cursor:
+                        "pointer",
+                      fontSize:
+                        "12px",
+                    }}
+                  >
+                    DOWNLOAD MESSAGE
+                  </button>
+                </div>
+
                 <div
-                  key={item.id}
                   style={{
-                    background:
-                      "white",
-                    borderRadius:
-                      "24px",
-                    overflow:
-                      "hidden",
-                    boxShadow:
-                      "0 10px 30px rgba(0,0,0,0.06)",
+                    display: "grid",
+                    gridTemplateColumns:
+                      "repeat(3,1fr)",
+                    gap: "10px",
                   }}
                 >
-                  {item.fileUrl &&
-                    item.fileType ===
-                      "image" && (
+                  {memory.files?.map(
+                    (
+                      file,
+                      index
+                    ) => (
                       <div
-                        style={{
-                          height:
-                            "220px",
-                          background:
-                            "#f3f3f3",
-                          display:
-                            "flex",
-                          alignItems:
-                            "center",
-                          justifyContent:
-                            "center",
-                          padding:
-                            "12px",
-                        }}
+                        key={
+                          index
+                        }
                       >
-                        <img
-                          src={
-                            item.fileUrl
-                          }
-                          alt=""
+                        <div
                           onClick={() =>
-                            setSelectedImage(
-                              item.fileUrl
+                            setSelectedMedia(
+                              file
                             )
                           }
                           style={{
-                            maxWidth:
+                            width:
                               "100%",
-                            maxHeight:
-                              "100%",
-                            objectFit:
-                              "contain",
-                            cursor:
-                              "pointer",
+                            aspectRatio:
+                              "1/1",
                             borderRadius:
                               "14px",
+                            overflow:
+                              "hidden",
+                            cursor:
+                              "pointer",
+                            background:
+                              "#f3eee8",
                           }}
-                        />
-                      </div>
-                    )}
+                        >
+                          {file.type ===
+                          "image" ? (
+                            <img
+                              src={
+                                file.url
+                              }
+                              alt=""
+                              style={{
+                                width:
+                                  "100%",
+                                height:
+                                  "100%",
+                                objectFit:
+                                  "cover",
+                              }}
+                            />
+                          ) : (
+                            <video
+                              muted
+                              style={{
+                                width:
+                                  "100%",
+                                height:
+                                  "100%",
+                                objectFit:
+                                  "cover",
+                              }}
+                            >
+                              <source
+                                src={
+                                  file.url
+                                }
+                              />
+                            </video>
+                          )}
+                        </div>
 
-                  {item.fileUrl &&
-                    item.fileType ===
-                      "video" && (
-                      <video
-                        controls
-                        style={{
-                          width:
-                            "100%",
-                          height:
-                            "220px",
-                          objectFit:
-                            "cover",
-                          background:
-                            "#000",
-                        }}
-                      >
-                        <source
-                          src={
-                            item.fileUrl
+                        <button
+                          onClick={() =>
+                            downloadFile(
+                              file.url,
+                              `memory-${index}`
+                            )
                           }
-                        />
-                      </video>
-                    )}
-
-                  <div
-                    style={{
-                      padding:
-                        "18px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize:
-                          "12px",
-                        opacity:
-                          0.45,
-                        marginBottom:
-                          "8px",
-                        letterSpacing:
-                          "2px",
-                      }}
-                    >
-                      GUEST
-                    </div>
-
-                    <h3
-                      style={{
-                        fontSize:
-                          "24px",
-                        marginBottom:
-                          "14px",
-                        color:
-                          "#2d2926",
-                      }}
-                    >
-                      {
-                        item.guestName
-                      }
-                    </h3>
-
-                    <p
-                      style={{
-                        lineHeight:
-                          "1.8",
-                        opacity:
-                          0.72,
-                        marginBottom:
-                          "18px",
-                        fontSize:
-                          "15px",
-                      }}
-                    >
-                      {
-                        item.message
-                      }
-                    </p>
-
-                    {item.fileUrl && (
-                      <button
-                        onClick={() =>
-                          downloadFile(
-                            item.fileUrl
-                          )
-                        }
-                        style={
-                          buttonStyle
-                        }
-                      >
-                        OPEN FULL SIZE
-                      </button>
-                    )}
-                  </div>
+                          style={{
+                            width:
+                              "100%",
+                            marginTop:
+                              "6px",
+                            border:
+                              "none",
+                            borderRadius:
+                              "10px",
+                            padding:
+                              "8px",
+                            background:
+                              "#2d2926",
+                            color:
+                              "white",
+                            cursor:
+                              "pointer",
+                            fontSize:
+                              "11px",
+                          }}
+                        >
+                          DOWNLOAD
+                        </button>
+                      </div>
+                    )
+                  )}
                 </div>
-              )
-            )}
-          </div>
-        )}
+              </div>
+            )
+          )}
+        </div>
       </div>
 
-      {selectedImage && (
+      {selectedMedia && (
         <div
           onClick={() =>
-            setSelectedImage("")
+            setSelectedMedia(
+              null
+            )
           }
           style={{
             position:
               "fixed",
             inset: 0,
             background:
-              "rgba(0,0,0,0.85)",
+              "rgba(0,0,0,0.88)",
             display: "flex",
-            justifyContent:
-              "center",
             alignItems:
+              "center",
+            justifyContent:
               "center",
             padding: "30px",
             zIndex: 999,
           }}
         >
-          <img
-            src={selectedImage}
-            alt=""
-            style={{
-              maxWidth: "90%",
-              maxHeight:
-                "90%",
-              borderRadius:
-                "20px",
-            }}
-          />
+          {selectedMedia.type ===
+          "image" ? (
+            <img
+              src={
+                selectedMedia.url
+              }
+              alt=""
+              style={{
+                maxWidth:
+                  "90%",
+                maxHeight:
+                  "90%",
+                borderRadius:
+                  "20px",
+              }}
+            />
+          ) : (
+            <video
+              controls
+              autoPlay
+              style={{
+                maxWidth:
+                  "90%",
+                maxHeight:
+                  "90%",
+                borderRadius:
+                  "20px",
+              }}
+            >
+              <source
+                src={
+                  selectedMedia.url
+                }
+              />
+            </video>
+          )}
         </div>
       )}
     </div>
   );
 }
-
-const buttonStyle = {
-  width: "100%",
-  padding: "14px",
-  borderRadius: "14px",
-  border: "none",
-  background: "#2d2926",
-  color: "white",
-  cursor: "pointer",
-  fontSize: "14px",
-};
 
 export default OwnerGallery;

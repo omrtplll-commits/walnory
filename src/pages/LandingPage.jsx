@@ -10,12 +10,13 @@ function LandingPage() {
         background:
           "linear-gradient(to bottom,#f8f5f0,#efe7dc)",
         color: "#2d2926",
+        overflowX: "hidden",
       }}
     >
       <section
         style={{
           padding:
-            "120px 20px 100px",
+            "90px 18px 80px",
         }}
       >
         <div
@@ -28,9 +29,9 @@ function LandingPage() {
           <div
             style={{
               letterSpacing: "5px",
-              fontSize: "13px",
+              fontSize: "12px",
               opacity: 0.6,
-              marginBottom: "24px",
+              marginBottom: "22px",
             }}
           >
             WALNORY
@@ -38,11 +39,12 @@ function LandingPage() {
 
           <h1
             style={{
-              fontSize: "78px",
+              fontSize:
+                "clamp(42px,9vw,78px)",
               lineHeight: "1.08",
               maxWidth: "950px",
               margin:
-                "0 auto 30px",
+                "0 auto 28px",
             }}
           >
             Turn Wedding Moments
@@ -53,8 +55,9 @@ function LandingPage() {
             style={{
               maxWidth: "760px",
               margin:
-                "0 auto 45px",
-              fontSize: "20px",
+                "0 auto 40px",
+              fontSize:
+                "clamp(16px,4vw,20px)",
               lineHeight: "1.9",
               opacity: 0.72,
             }}
@@ -73,9 +76,9 @@ function LandingPage() {
               display: "flex",
               justifyContent:
                 "center",
-              gap: "18px",
+              gap: "16px",
               flexWrap: "wrap",
-              marginBottom: "60px",
+              marginBottom: "50px",
             }}
           >
             <button
@@ -103,7 +106,8 @@ function LandingPage() {
           <div
             style={{
               opacity: 0.72,
-              fontSize: "16px",
+              fontSize:
+                "clamp(14px,3vw,16px)",
               lineHeight: "2",
               maxWidth: "850px",
               margin: "0 auto",
@@ -115,6 +119,7 @@ function LandingPage() {
             wedding tables with our
             premium products.
             <br />
+            <br />
             Discover elegant card
             prints, luxury acrylic
             QR signs, and
@@ -122,6 +127,7 @@ function LandingPage() {
             wedding displays
             available through our
             Etsy store.
+            <br />
             <br />
             We know your special
             day is once in a
@@ -136,7 +142,7 @@ function LandingPage() {
       <section
         style={{
           padding:
-            "20px 20px 120px",
+            "10px 18px 90px",
         }}
       >
         <div
@@ -148,17 +154,17 @@ function LandingPage() {
           <div
             style={{
               textAlign: "center",
-              marginBottom: "70px",
+              marginBottom: "55px",
             }}
           >
             <div
               style={{
                 letterSpacing:
                   "4px",
-                fontSize: "13px",
+                fontSize: "12px",
                 opacity: 0.5,
                 marginBottom:
-                  "18px",
+                  "16px",
               }}
             >
               HOW IT WORKS
@@ -166,7 +172,8 @@ function LandingPage() {
 
             <h2
               style={{
-                fontSize: "56px",
+                fontSize:
+                  "clamp(36px,8vw,56px)",
               }}
             >
               Elegant & Effortless
@@ -177,8 +184,8 @@ function LandingPage() {
             style={{
               display: "grid",
               gridTemplateColumns:
-                "repeat(auto-fit,minmax(280px,1fr))",
-              gap: "28px",
+                "repeat(auto-fit,minmax(260px,1fr))",
+              gap: "22px",
             }}
           >
             <div
@@ -281,7 +288,7 @@ function LandingPage() {
       <section
         style={{
           padding:
-            "0 20px 120px",
+            "0 18px 90px",
         }}
       >
         <div
@@ -289,8 +296,9 @@ function LandingPage() {
             maxWidth: "1100px",
             margin: "0 auto",
             background: "white",
-            borderRadius: "36px",
-            padding: "70px",
+            borderRadius: "30px",
+            padding:
+              "clamp(30px,6vw,70px)",
             boxShadow:
               "0 20px 50px rgba(0,0,0,0.06)",
           }}
@@ -298,9 +306,9 @@ function LandingPage() {
           <div
             style={{
               letterSpacing: "4px",
-              fontSize: "13px",
+              fontSize: "12px",
               opacity: 0.5,
-              marginBottom: "20px",
+              marginBottom: "18px",
             }}
           >
             PHYSICAL PRODUCTS
@@ -308,8 +316,9 @@ function LandingPage() {
 
           <h2
             style={{
-              fontSize: "54px",
-              marginBottom: "30px",
+              fontSize:
+                "clamp(36px,8vw,54px)",
+              marginBottom: "28px",
             }}
           >
             Elegant Wedding QR
@@ -320,8 +329,9 @@ function LandingPage() {
             style={{
               lineHeight: "2",
               opacity: 0.72,
-              fontSize: "18px",
-              marginBottom: "26px",
+              fontSize:
+                "clamp(15px,3vw,18px)",
+              marginBottom: "24px",
             }}
           >
             WALNORY experiences can
@@ -336,7 +346,8 @@ function LandingPage() {
             style={{
               lineHeight: "2",
               opacity: 0.72,
-              fontSize: "18px",
+              fontSize:
+                "clamp(15px,3vw,18px)",
             }}
           >
             You can print your QR
@@ -352,7 +363,7 @@ function LandingPage() {
       <section
         style={{
           padding:
-            "0 20px 120px",
+            "0 18px 90px",
         }}
       >
         <div
@@ -364,17 +375,17 @@ function LandingPage() {
           <div
             style={{
               textAlign: "center",
-              marginBottom: "60px",
+              marginBottom: "50px",
             }}
           >
             <div
               style={{
                 letterSpacing:
                   "4px",
-                fontSize: "13px",
+                fontSize: "12px",
                 opacity: 0.5,
                 marginBottom:
-                  "18px",
+                  "16px",
               }}
             >
               PRIVACY & TRUST
@@ -382,7 +393,8 @@ function LandingPage() {
 
             <h2
               style={{
-                fontSize: "56px",
+                fontSize:
+                  "clamp(36px,8vw,56px)",
               }}
             >
               Your Memories Stay
@@ -394,8 +406,8 @@ function LandingPage() {
             style={{
               display: "grid",
               gridTemplateColumns:
-                "repeat(auto-fit,minmax(300px,1fr))",
-              gap: "28px",
+                "repeat(auto-fit,minmax(260px,1fr))",
+              gap: "22px",
             }}
           >
             <div
@@ -465,7 +477,7 @@ function LandingPage() {
           borderTop:
             "1px solid rgba(0,0,0,0.08)",
           padding:
-            "40px 20px 60px",
+            "36px 18px 50px",
         }}
       >
         <div
@@ -475,13 +487,15 @@ function LandingPage() {
             display: "flex",
             justifyContent:
               "space-between",
+            alignItems: "center",
             flexWrap: "wrap",
-            gap: "20px",
+            gap: "18px",
           }}
         >
           <div
             style={{
               opacity: 0.7,
+              fontSize: "14px",
             }}
           >
             © WALNORY
@@ -490,10 +504,10 @@ function LandingPage() {
           <div
             style={{
               display: "flex",
-              gap: "24px",
+              gap: "18px",
               flexWrap: "wrap",
               opacity: 0.7,
-              fontSize: "14px",
+              fontSize: "13px",
             }}
           >
             <span>
@@ -519,44 +533,46 @@ function LandingPage() {
 }
 
 const primaryButton = {
-  padding: "20px 34px",
-  borderRadius: "20px",
+  padding: "18px 30px",
+  borderRadius: "18px",
   border: "none",
   background: "#2d2926",
   color: "white",
-  fontSize: "15px",
+  fontSize: "14px",
   letterSpacing: "1px",
   cursor: "pointer",
+  minWidth: "190px",
 };
 
 const secondaryButton = {
-  padding: "20px 34px",
-  borderRadius: "20px",
+  padding: "18px 30px",
+  borderRadius: "18px",
   border: "1px solid #d8cec2",
   background: "transparent",
   color: "#2d2926",
-  fontSize: "15px",
+  fontSize: "14px",
   letterSpacing: "1px",
   cursor: "pointer",
+  minWidth: "190px",
 };
 
 const cardStyle = {
   background: "white",
-  padding: "40px",
-  borderRadius: "30px",
+  padding: "32px",
+  borderRadius: "28px",
   boxShadow:
     "0 15px 40px rgba(0,0,0,0.06)",
 };
 
 const numberStyle = {
-  fontSize: "14px",
+  fontSize: "13px",
   letterSpacing: "3px",
   opacity: 0.45,
-  marginBottom: "22px",
+  marginBottom: "20px",
 };
 
 const titleStyle = {
-  fontSize: "30px",
+  fontSize: "28px",
   marginBottom: "18px",
   color: "#2d2926",
 };
@@ -564,7 +580,7 @@ const titleStyle = {
 const textStyle = {
   lineHeight: "1.9",
   opacity: 0.72,
-  fontSize: "16px",
+  fontSize: "15px",
 };
 
 export default LandingPage;
