@@ -12,6 +12,7 @@ import {
 import { db } from "../firebase";
 
 function OwnerGallery() {
+
   const { ownerId } =
     useParams();
 
@@ -22,6 +23,7 @@ function OwnerGallery() {
     useState(null);
 
   useEffect(() => {
+
     const eventQuery = query(
       collection(db, "events"),
       where(
@@ -35,6 +37,7 @@ function OwnerGallery() {
       onSnapshot(
         eventQuery,
         (eventSnapshot) => {
+
           if (
             eventSnapshot.empty
           ) {
@@ -63,6 +66,7 @@ function OwnerGallery() {
               (
                 memoriesSnapshot
               ) => {
+
                 const items =
                   memoriesSnapshot.docs.map(
                     (doc) => ({
@@ -84,62 +88,12 @@ function OwnerGallery() {
 
     return () =>
       unsubscribeEvents();
+
   }, [ownerId]);
-
-  const downloadFile =
-    async (
-      url,
-      fileName
-    ) => {
-      try {
-        const response =
-          await fetch(url, {
-            mode: "cors",
-          });
-
-        const blob =
-          await response.blob();
-
-        const blobUrl =
-          URL.createObjectURL(
-            blob
-          );
-
-        const a =
-          document.createElement(
-            "a"
-          );
-
-        a.href =
-          blobUrl;
-
-        a.download =
-          fileName;
-
-        document.body.appendChild(
-          a
-        );
-
-        a.click();
-
-        document.body.removeChild(
-          a
-        );
-
-        URL.revokeObjectURL(
-          blobUrl
-        );
-      } catch (error) {
-        console.error(error);
-
-        alert(
-          "Download failed"
-        );
-      }
-    };
 
   const downloadMessage =
     (memory) => {
+
       const text =
         `Guest: ${memory.guestName}
 
@@ -163,7 +117,8 @@ ${memory.message}`;
 
       link.href = url;
 
-      link.download = `${memory.guestName}-message.txt`;
+      link.download =
+        `${memory.guestName}-message.txt`;
 
       document.body.appendChild(
         link
@@ -221,23 +176,18 @@ ${memory.message}`;
               color: "#2d2926",
             }}
           >
-            Your Wedding
-            Memories
+            Your Wedding Memories
           </h1>
 
           <p
             style={{
-              opacity: 0.7,
-              maxWidth: "700px",
-              margin: "0 auto",
-              lineHeight: "1.8",
+              color: "#6d645c",
+              fontSize: "18px",
             }}
           >
-            All uploaded guest
-            photos, videos, and
-            messages appear here
-            privately for the
-            event owner.
+            All uploaded guest photos,
+            videos, and messages appear
+            here privately for the event owner.
           </p>
         </div>
 
@@ -255,16 +205,18 @@ ${memory.message}`;
                 key={memory.id}
                 style={{
                   background:
-                    "white",
+                    "rgba(255,255,255,0.75)",
+                  backdropFilter:
+                    "blur(10px)",
                   borderRadius:
-                    "24px",
-                  padding: "22px",
+                    "28px",
+                  padding: "24px",
                   display: "grid",
                   gridTemplateColumns:
-                    "1fr 320px",
-                  gap: "24px",
+                    "1fr 340px",
+                  gap: "20px",
                   alignItems:
-                    "start",
+                    "center",
                   boxShadow:
                     "0 10px 30px rgba(0,0,0,0.05)",
                 }}
@@ -273,12 +225,12 @@ ${memory.message}`;
                   <div
                     style={{
                       fontSize:
-                        "11px",
+                        "12px",
                       letterSpacing:
-                        "2px",
-                      opacity: 0.45,
+                        "4px",
+                      opacity: 0.5,
                       marginBottom:
-                        "10px",
+                        "14px",
                     }}
                   >
                     GUEST
@@ -287,11 +239,11 @@ ${memory.message}`;
                   <h2
                     style={{
                       fontSize:
-                        "34px",
+                        "52px",
+                      margin:
+                        "0 0 18px 0",
                       color:
                         "#2d2926",
-                      marginBottom:
-                        "14px",
                     }}
                   >
                     {
@@ -301,11 +253,14 @@ ${memory.message}`;
 
                   <p
                     style={{
-                      lineHeight:
-                        "1.8",
-                      opacity: 0.75,
-                      marginBottom:
+                      fontSize:
                         "20px",
+                      color:
+                        "#4f4740",
+                      lineHeight:
+                        1.6,
+                      marginBottom:
+                        "22px",
                     }}
                   >
                     {
@@ -320,20 +275,20 @@ ${memory.message}`;
                       )
                     }
                     style={{
-                      border:
-                        "none",
                       background:
                         "#2d2926",
                       color:
                         "white",
-                      padding:
-                        "12px 18px",
+                      border:
+                        "none",
                       borderRadius:
-                        "14px",
+                        "16px",
+                      padding:
+                        "14px 24px",
+                      fontSize:
+                        "15px",
                       cursor:
                         "pointer",
-                      fontSize:
-                        "12px",
                     }}
                   >
                     DOWNLOAD MESSAGE
@@ -346,6 +301,8 @@ ${memory.message}`;
                     gridTemplateColumns:
                       "repeat(3,1fr)",
                     gap: "10px",
+                    justifyItems:
+                      "end",
                   }}
                 >
                   {memory.files?.map(
@@ -357,95 +314,65 @@ ${memory.message}`;
                         key={
                           index
                         }
+                        onClick={() =>
+                          setSelectedMedia(
+                            file
+                          )
+                        }
+                        style={{
+                          width:
+                            "96px",
+                          height:
+                            "96px",
+                          borderRadius:
+                            "18px",
+                          overflow:
+                            "hidden",
+                          cursor:
+                            "pointer",
+                          background:
+                            "#ece7df",
+                        }}
                       >
-                        <div
-                          onClick={() =>
-                            setSelectedMedia(
-                              file
-                            )
-                          }
-                          style={{
-                            width:
-                              "100%",
-                            aspectRatio:
-                              "1/1",
-                            borderRadius:
-                              "14px",
-                            overflow:
-                              "hidden",
-                            cursor:
-                              "pointer",
-                            background:
-                              "#f3eee8",
-                          }}
-                        >
-                          {file.type ===
-                          "image" ? (
-                            <img
+                        {file.type ===
+                        "image" ? (
+                          <img
+                            src={
+                              file.url
+                            }
+                            alt=""
+                            style={{
+                              width:
+                                "100%",
+                              height:
+                                "100%",
+                              objectFit:
+                                "cover",
+                              display:
+                                "block",
+                            }}
+                          />
+                        ) : (
+                          <video
+                            muted
+                            style={{
+                              width:
+                                "100%",
+                              height:
+                                "100%",
+                              objectFit:
+                                "cover",
+                              display:
+                                "block",
+                            }}
+                          >
+                            <source
                               src={
                                 file.url
                               }
-                              alt=""
-                              style={{
-                                width:
-                                  "100%",
-                                height:
-                                  "100%",
-                                objectFit:
-                                  "cover",
-                              }}
                             />
-                          ) : (
-                            <video
-                              muted
-                              style={{
-                                width:
-                                  "100%",
-                                height:
-                                  "100%",
-                                objectFit:
-                                  "cover",
-                              }}
-                            >
-                              <source
-                                src={
-                                  file.url
-                                }
-                              />
-                            </video>
-                          )}
-                        </div>
-
-                        <button
-                          onClick={() =>
-                            downloadFile(
-                              file.url,
-                              `memory-${index}`
-                            )
-                          }
-                          style={{
-                            width:
-                              "100%",
-                            marginTop:
-                              "6px",
-                            border:
-                              "none",
-                            borderRadius:
-                              "10px",
-                            padding:
-                              "8px",
-                            background:
-                              "#2d2926",
-                            color:
-                              "white",
-                            cursor:
-                              "pointer",
-                            fontSize:
-                              "11px",
-                          }}
-                        >
-                          DOWNLOAD
-                        </button>
+                          </video>
+                        )}
                       </div>
                     )
                   )}
@@ -464,18 +391,17 @@ ${memory.message}`;
             )
           }
           style={{
-            position:
-              "fixed",
+            position: "fixed",
             inset: 0,
             background:
-              "rgba(0,0,0,0.88)",
+              "rgba(0,0,0,0.85)",
             display: "flex",
             alignItems:
               "center",
             justifyContent:
               "center",
-            padding: "30px",
             zIndex: 999,
+            padding: "20px",
           }}
         >
           {selectedMedia.type ===
@@ -486,8 +412,7 @@ ${memory.message}`;
               }
               alt=""
               style={{
-                maxWidth:
-                  "90%",
+                maxWidth: "90%",
                 maxHeight:
                   "90%",
                 borderRadius:
@@ -499,8 +424,7 @@ ${memory.message}`;
               controls
               autoPlay
               style={{
-                maxWidth:
-                  "90%",
+                maxWidth: "90%",
                 maxHeight:
                   "90%",
                 borderRadius:
