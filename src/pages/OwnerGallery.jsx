@@ -52,15 +52,10 @@ function OwnerGallery() {
     URL.revokeObjectURL(url);
   };
 
-  // Fotoğraf veya videoyu indir
+  // Fotoğraf veya videoyu indir (Vercel api/download üzerinden)
   const downloadFile = (fileUrl) => {
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.download = `walnory-memory-${Date.now()}`;
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    const encoded = encodeURIComponent(fileUrl);
+    window.location.href = `/api/download?url=${encoded}`;
   };
 
   return (
