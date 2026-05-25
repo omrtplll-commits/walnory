@@ -76,10 +76,6 @@ function CreateEventPage() {
       setEventLink(generatedLink);
       setOwnerLink(generatedOwnerLink);
 
-      // QR kod URL'sini oluştur
-      const qrCanvas = document.getElementById("walnoryQR");
-      const qrImageUrl = qrCanvas ? qrCanvas.toDataURL("image/png") : "";
-
       // EmailJS ile mail gönder
       await emailjs.send(
         EMAILJS_SERVICE_ID,
@@ -90,7 +86,6 @@ function CreateEventPage() {
           owner_link: generatedOwnerLink,
           event_link: generatedLink,
           event_name: eventName,
-          qr_code_url: qrImageUrl,
         },
         EMAILJS_PUBLIC_KEY
       );
@@ -151,11 +146,6 @@ function CreateEventPage() {
             Please also save your private owner link below. This link gives access to all uploaded guest memories.
           </p>
 
-          {/* QR hidden for download, visible below */}
-          <div style={{ display: "none" }}>
-            <QRCodeCanvas id="walnoryQR" value={eventLink} size={220} />
-          </div>
-
           <div style={{
             background: "white",
             padding: "24px",
@@ -164,7 +154,7 @@ function CreateEventPage() {
             margin: "0 auto 30px",
             boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
           }}>
-            <QRCodeCanvas value={eventLink} size={220} />
+            <QRCodeCanvas id="walnoryQR" value={eventLink} size={220} />
           </div>
 
           <div style={{ marginBottom: "20px" }}>
@@ -215,53 +205,58 @@ function CreateEventPage() {
         <div style={{ letterSpacing: "4px", fontSize: "11px", opacity: 0.4, marginBottom: "16px" }}>
           CREATE EVENT
         </div>
-        <h1 style={{ fontSize: "clamp(28px,5vw,42px)", marginBottom: "40px", color: "#2d2926", fontWeight: 700 }}>
+        <h1 style={{ fontSize: "clamp(28px,5vw,42px)", marginBottom: "8px", color: "#2d2926", fontWeight: 700 }}>
           Create Your Event
         </h1>
+        <p style={{ fontSize: "14px", opacity: 0.5, marginBottom: "36px", lineHeight: 1.6 }}>
+          Your gallery link and QR code will be sent to your email automatically.
+        </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+
+          {/* Mail en üstte */}
           <input
-            placeholder="Activation Token"
-            value={token}
-            onChange={(e) => setToken(e.target.value)}
-            style={inputStyle}
-          />
-          <input
-            placeholder="Event Name"
-            value={eventName}
-            onChange={(e) => setEventName(e.target.value)}
-            style={inputStyle}
-          />
-          <input
-            placeholder="Couple / Host Names"
-            value={coupleNames}
-            onChange={(e) => setCoupleNames(e.target.value)}
-            style={inputStyle}
-          />
-          <input
-            type="date"
-            value={eventDate}
-            onChange={(e) => setEventDate(e.target.value)}
-            style={inputStyle}
-          />
-          <input
-            placeholder="Venue Location"
-            value={venue}
-            onChange={(e) => setVenue(e.target.value)}
-            style={inputStyle}
-          />
-          <input
-            placeholder="Your Email Address (owner link will be sent here)"
+            placeholder="Your Email Address"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             style={inputStyle}
           />
 
-          {/* QR hidden, used for email */}
-          <div style={{ display: "none" }}>
-            <QRCodeCanvas id="walnoryQR" value={`${SITE_URL}/event/preview`} size={220} />
-          </div>
+          <input
+            placeholder="Activation Token"
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
+            style={inputStyle}
+          />
+
+          <input
+            placeholder="Event Name"
+            value={eventName}
+            onChange={(e) => setEventName(e.target.value)}
+            style={inputStyle}
+          />
+
+          <input
+            placeholder="Couple / Host Names"
+            value={coupleNames}
+            onChange={(e) => setCoupleNames(e.target.value)}
+            style={inputStyle}
+          />
+
+          <input
+            type="date"
+            value={eventDate}
+            onChange={(e) => setEventDate(e.target.value)}
+            style={inputStyle}
+          />
+
+          <input
+            placeholder="Venue Location"
+            value={venue}
+            onChange={(e) => setVenue(e.target.value)}
+            style={inputStyle}
+          />
 
           <button
             onClick={handleCreate}
