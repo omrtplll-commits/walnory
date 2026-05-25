@@ -13,17 +13,13 @@ function OwnerGallery() {
       collection(db, "events"),
       where("ownerId", "==", ownerId)
     );
-
     const unsubscribeEvents = onSnapshot(eventQuery, (eventSnapshot) => {
       if (eventSnapshot.empty) return;
-
       const eventId = eventSnapshot.docs[0].id;
-
       const memoriesQuery = query(
         collection(db, "memories"),
         where("eventId", "==", eventId)
       );
-
       const unsubscribeMemories = onSnapshot(memoriesQuery, (memoriesSnapshot) => {
         const items = memoriesSnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -31,14 +27,11 @@ function OwnerGallery() {
         }));
         setMemories(items);
       });
-
       return () => unsubscribeMemories();
     });
-
     return () => unsubscribeEvents();
   }, [ownerId]);
 
-  // Mesajı .txt olarak indir
   const downloadMessage = (memory) => {
     const text = `Guest: ${memory.guestName}\n\nMessage:\n${memory.message}`;
     const blob = new Blob([text], { type: "text/plain" });
@@ -52,7 +45,6 @@ function OwnerGallery() {
     URL.revokeObjectURL(url);
   };
 
-  // Fotoğraf veya videoyu indir (blob yöntemi - CORS bypass)
   const downloadFile = async (fileUrl, fileType) => {
     try {
       const response = await fetch(fileUrl);
@@ -77,129 +69,173 @@ function OwnerGallery() {
     <div style={{
       minHeight: "100vh",
       background: "linear-gradient(to bottom, #f8f5f0, #efe7dc)",
-      padding: "24px 16px",
+      padding: "40px 16px",
+      fontFamily: "'Georgia', serif",
     }}>
-      <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "860px", margin: "0 auto" }}>
 
         {/* Başlık */}
-        <div style={{ textAlign: "center", marginBottom: "40px" }}>
+        <div style={{ textAlign: "center", marginBottom: "56px" }}>
           <div style={{
-            letterSpacing: "4px",
-            fontSize: "11px",
-            opacity: 0.45,
-            marginBottom: "10px",
+            letterSpacing: "5px",
+            fontSize: "10px",
+            opacity: 0.4,
+            marginBottom: "16px",
             textTransform: "uppercase",
+            fontFamily: "sans-serif",
           }}>
             Private Owner Gallery
           </div>
           <h1 style={{
-            fontSize: "clamp(24px, 5vw, 42px)",
-            marginBottom: "12px",
+            fontSize: "clamp(28px, 5vw, 48px)",
+            marginBottom: "14px",
             color: "#2d2926",
-            fontWeight: 400,
+            fontWeight: 700,
+            lineHeight: 1.2,
           }}>
             Your Wedding Memories
           </h1>
-          <p style={{ color: "#6d645c", fontSize: "15px" }}>
+          <div style={{
+            width: "40px",
+            height: "1px",
+            background: "#c4b8a8",
+            margin: "0 auto 16px",
+          }} />
+          <p style={{ color: "#7d736b", fontSize: "14px", fontFamily: "sans-serif" }}>
             All guest photos, videos and messages — private to you.
           </p>
         </div>
 
-        {/* Bellek Kartları */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        {/* Kartlar */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {memories.length === 0 && (
-            <div style={{ textAlign: "center", color: "#9d948c", fontSize: "15px", padding: "60px 0" }}>
+            <div style={{ textAlign: "center", color: "#9d948c", fontSize: "14px", padding: "80px 0", fontFamily: "sans-serif" }}>
               No memories uploaded yet.
             </div>
           )}
 
           {memories.map((memory) => (
             <div key={memory.id} style={{
-              background: "rgba(255,255,255,0.8)",
-              backdropFilter: "blur(10px)",
+              background: "rgba(255,255,255,0.85)",
+              backdropFilter: "blur(12px)",
               borderRadius: "20px",
-              padding: "20px",
-              boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
+              padding: "28px",
+              boxShadow: "0 2px 24px rgba(0,0,0,0.06)",
+              border: "1px solid rgba(196,184,168,0.25)",
             }}>
-              {/* Üst satır: isim + mesaj */}
-              <div style={{ marginBottom: "16px" }}>
-                <div style={{
-                  fontSize: "10px",
-                  letterSpacing: "3px",
-                  opacity: 0.4,
-                  marginBottom: "6px",
-                  textTransform: "uppercase",
-                }}>
-                  Guest
+
+              {/* Üst kısım: sol bilgi, sağ thumbnail */}
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "1fr auto",
+                gap: "24px",
+                alignItems: "start",
+                marginBottom: "20px",
+              }}>
+
+                {/* Sol: isim + mesaj */}
+                <div>
+                  <div style={{
+                    fontSize: "9px",
+                    letterSpacing: "3px",
+                    opacity: 0.35,
+                    marginBottom: "8px",
+                    textTransform: "uppercase",
+                    fontFamily: "sans-serif",
+                  }}>
+                    Guest
+                  </div>
+                  <div style={{
+                    fontSize: "24px",
+                    fontWeight: 700,
+                    color: "#2d2926",
+                    marginBottom: "10px",
+                    textTransform: "capitalize",
+                  }}>
+                    {memory.guestName}
+                  </div>
+                  {memory.message && (
+                    <p style={{
+                      fontSize: "14px",
+                      color: "#5a5148",
+                      lineHeight: 1.7,
+                      margin: 0,
+                      fontStyle: "italic",
+                      fontFamily: "Georgia, serif",
+                    }}>
+                      "{memory.message}"
+                    </p>
+                  )}
                 </div>
-                <div style={{ fontSize: "22px", fontWeight: 500, color: "#2d2926", marginBottom: "8px" }}>
-                  {memory.guestName}
-                </div>
-                {memory.message && (
-                  <p style={{ fontSize: "15px", color: "#4f4740", lineHeight: 1.6, margin: 0 }}>
-                    {memory.message}
-                  </p>
+
+                {/* Sağ: thumbnail'lar */}
+                {memory.files && memory.files.length > 0 && (
+                  <div style={{
+                    display: "grid",
+                    gridTemplateColumns: memory.files.length === 1 ? "1fr" : "repeat(2, 1fr)",
+                    gap: "8px",
+                  }}>
+                    {memory.files.map((file, index) => (
+                      <div
+                        key={index}
+                        onClick={() => setSelectedMedia(file)}
+                        style={{
+                          width: "110px",
+                          height: "110px",
+                          borderRadius: "14px",
+                          overflow: "hidden",
+                          cursor: "pointer",
+                          background: "#ece7df",
+                          position: "relative",
+                          flexShrink: 0,
+                        }}
+                      >
+                        {file.type === "image" ? (
+                          <img
+                            src={file.url}
+                            alt=""
+                            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                          />
+                        ) : (
+                          <>
+                            <video
+                              muted
+                              playsInline
+                              preload="metadata"
+                              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                            >
+                              <source src={file.url + "#t=0.5"} />
+                            </video>
+                            <div style={{
+                              position: "absolute", inset: 0,
+                              display: "flex", alignItems: "center", justifyContent: "center",
+                              background: "rgba(0,0,0,0.25)",
+                            }}>
+                              <div style={{
+                                width: "36px", height: "36px",
+                                borderRadius: "50%",
+                                background: "rgba(255,255,255,0.9)",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                              }}>
+                                <div style={{
+                                  width: 0, height: 0,
+                                  borderTop: "7px solid transparent",
+                                  borderBottom: "7px solid transparent",
+                                  borderLeft: "12px solid #2d2926",
+                                  marginLeft: "3px",
+                                }} />
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
 
-              {/* Thumbnail'lar */}
-              {memory.files && memory.files.length > 0 && (
-                <div style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: "8px",
-                  marginBottom: "16px",
-                }}>
-                  {memory.files.map((file, index) => (
-                    <div
-                      key={index}
-                      onClick={() => setSelectedMedia(file)}
-                      style={{
-                        width: "80px",
-                        height: "80px",
-                        borderRadius: "12px",
-                        overflow: "hidden",
-                        cursor: "pointer",
-                        background: "#ece7df",
-                        flexShrink: 0,
-                        position: "relative",
-                      }}
-                    >
-                      {file.type === "image" ? (
-                        <img
-                          src={file.url}
-                          alt=""
-                          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                        />
-                      ) : (
-                        <>
-                          <video
-                            muted
-                            playsInline
-                            preload="metadata"
-                            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                          >
-                            <source src={file.url + "#t=0.5"} />
-                          </video>
-                          <div style={{
-                            position: "absolute", inset: 0,
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            background: "rgba(0,0,0,0.2)",
-                          }}>
-                            <div style={{
-                              width: 0, height: 0,
-                              borderTop: "8px solid transparent",
-                              borderBottom: "8px solid transparent",
-                              borderLeft: "14px solid rgba(255,255,255,0.9)",
-                              marginLeft: "3px",
-                            }} />
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
+              {/* Ayırıcı çizgi */}
+              <div style={{ height: "1px", background: "rgba(196,184,168,0.3)", marginBottom: "18px" }} />
 
               {/* Download butonları */}
               <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
@@ -208,16 +244,18 @@ function OwnerGallery() {
                     onClick={() => downloadMessage(memory)}
                     style={{
                       background: "transparent",
-                      color: "#2d2926",
-                      border: "1.5px solid #2d2926",
-                      borderRadius: "10px",
+                      color: "#5a5148",
+                      border: "1px solid #c4b8a8",
+                      borderRadius: "8px",
                       padding: "8px 16px",
-                      fontSize: "12px",
-                      letterSpacing: "1px",
+                      fontSize: "11px",
+                      letterSpacing: "1.5px",
                       cursor: "pointer",
+                      fontFamily: "sans-serif",
+                      textTransform: "uppercase",
                     }}
                   >
-                    DOWNLOAD MESSAGE
+                    ↓ Message
                   </button>
                 )}
 
@@ -229,17 +267,20 @@ function OwnerGallery() {
                       background: "#2d2926",
                       color: "white",
                       border: "none",
-                      borderRadius: "10px",
+                      borderRadius: "8px",
                       padding: "8px 16px",
-                      fontSize: "12px",
-                      letterSpacing: "1px",
+                      fontSize: "11px",
+                      letterSpacing: "1.5px",
                       cursor: "pointer",
+                      fontFamily: "sans-serif",
+                      textTransform: "uppercase",
                     }}
                   >
-                    {file.type === "image" ? "📷" : "🎥"} DOWNLOAD {index + 1}
+                    ↓ {file.type === "image" ? "Photo" : "Video"} {memory.files.length > 1 ? index + 1 : ""}
                   </button>
                 ))}
               </div>
+
             </div>
           ))}
         </div>
@@ -251,27 +292,28 @@ function OwnerGallery() {
           onClick={() => setSelectedMedia(null)}
           style={{
             position: "fixed", inset: 0,
-            background: "rgba(0,0,0,0.88)",
+            background: "rgba(0,0,0,0.92)",
             display: "flex", alignItems: "center", justifyContent: "center",
             zIndex: 999, padding: "20px",
           }}
         >
           <div style={{
-            position: "absolute", top: "20px", right: "24px",
-            color: "white", fontSize: "28px", cursor: "pointer", opacity: 0.7,
+            position: "absolute", top: "24px", right: "28px",
+            color: "white", fontSize: "24px", cursor: "pointer", opacity: 0.6,
+            fontFamily: "sans-serif",
           }}>✕</div>
 
           {selectedMedia.type === "image" ? (
             <img
               src={selectedMedia.url}
               alt=""
-              style={{ maxWidth: "90%", maxHeight: "90%", borderRadius: "16px" }}
+              style={{ maxWidth: "90%", maxHeight: "85%", borderRadius: "16px" }}
             />
           ) : (
             <video
               controls
               autoPlay
-              style={{ maxWidth: "90%", maxHeight: "90%", borderRadius: "16px" }}
+              style={{ maxWidth: "90%", maxHeight: "85%", borderRadius: "16px" }}
             >
               <source src={selectedMedia.url} />
             </video>
@@ -280,14 +322,15 @@ function OwnerGallery() {
           <button
             onClick={(e) => { e.stopPropagation(); downloadFile(selectedMedia.url, selectedMedia.type); }}
             style={{
-              position: "absolute", bottom: "24px",
+              position: "absolute", bottom: "28px",
               background: "white", color: "#2d2926",
-              border: "none", borderRadius: "12px",
-              padding: "12px 28px", fontSize: "13px",
-              letterSpacing: "1px", cursor: "pointer",
+              border: "none", borderRadius: "10px",
+              padding: "12px 32px", fontSize: "11px",
+              letterSpacing: "2px", cursor: "pointer",
+              fontFamily: "sans-serif", textTransform: "uppercase",
             }}
           >
-            DOWNLOAD THIS FILE
+            ↓ Download
           </button>
         </div>
       )}
