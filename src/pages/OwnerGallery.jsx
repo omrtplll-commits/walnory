@@ -52,10 +52,25 @@ function OwnerGallery() {
     URL.revokeObjectURL(url);
   };
 
-  // Fotoğraf veya videoyu indir (Vercel api/download üzerinden)
-  const downloadFile = (fileUrl) => {
-    const encoded = encodeURIComponent(fileUrl);
-    window.location.href = `/api/download?url=${encoded}`;
+  // Fotoğraf veya videoyu indir (blob yöntemi - CORS bypass)
+  const downloadFile = async (fileUrl, fileType) => {
+    try {
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
+      const extension = fileType === "video" ? "mp4" : "jpg";
+      const fileName = `walnory-memory-${Date.now()}.${extension}`;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+      alert("Download failed. Please try again.");
+    }
   };
 
   return (
@@ -166,7 +181,6 @@ function OwnerGallery() {
                           >
                             <source src={file.url + "#t=0.5"} />
                           </video>
-                          {/* Video ikonu */}
                           <div style={{
                             position: "absolute", inset: 0,
                             display: "flex", alignItems: "center", justifyContent: "center",
@@ -210,7 +224,7 @@ function OwnerGallery() {
                 {memory.files?.map((file, index) => (
                   <button
                     key={index}
-                    onClick={() => downloadFile(file.url)}
+                    onClick={() => downloadFile(file.url, file.type)}
                     style={{
                       background: "#2d2926",
                       color: "white",
@@ -231,7 +245,7 @@ function OwnerGallery() {
         </div>
       </div>
 
-      {/* Modal — büyük medya önizleme */}
+      {/* Modal */}
       {selectedMedia && (
         <div
           onClick={() => setSelectedMedia(null)}
@@ -242,7 +256,6 @@ function OwnerGallery() {
             zIndex: 999, padding: "20px",
           }}
         >
-          {/* Kapat butonu */}
           <div style={{
             position: "absolute", top: "20px", right: "24px",
             color: "white", fontSize: "28px", cursor: "pointer", opacity: 0.7,
@@ -264,9 +277,8 @@ function OwnerGallery() {
             </video>
           )}
 
-          {/* Modal içinden de download */}
           <button
-            onClick={(e) => { e.stopPropagation(); downloadFile(selectedMedia.url); }}
+            onClick={(e) => { e.stopPropagation(); downloadFile(selectedMedia.url, selectedMedia.type); }}
             style={{
               position: "absolute", bottom: "24px",
               background: "white", color: "#2d2926",
