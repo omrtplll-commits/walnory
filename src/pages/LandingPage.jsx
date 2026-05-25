@@ -48,13 +48,10 @@ function LandingPage() {
             <button onClick={() => navigate("/create")} style={primaryButton}>
               CREATE EVENT
             </button>
-            <button
-              onClick={() => window.open(ETSY_URL, "_blank")}
-              style={secondaryButton}
-            >
+            <button onClick={() => window.open(ETSY_URL, "_blank")} style={secondaryButton}>
               VISIT ETSY STORE
             </button>
-            <button style={{ ...secondaryButton, opacity: 0.5, cursor: "default" }}>
+            <button style={{ ...secondaryButton, opacity: 0.4, cursor: "default" }}>
               WATCH DEMO
             </button>
           </div>
@@ -91,23 +88,23 @@ function LandingPage() {
             {[
               {
                 num: "01",
-                title: "Purchase & Activate",
-                text: "Purchase your WALNORY product through Etsy and receive your private event token to activate your wedding page and QR experience.",
+                title: "Purchase & Receive",
+                text: "Purchase your WALNORY product through Etsy. Shortly after your order, you will receive a PDF file with everything you need to get started. Simply send your purchase confirmation to the email address inside the PDF and receive your private activation token.",
               },
               {
                 num: "02",
-                title: "Display Your QR",
-                text: "Place your QR card or acrylic sign on tables, entrances, or wedding areas so guests can instantly access your private memory page.",
+                title: "Create & Print Your QR",
+                text: "Use your token to create your event page and download your unique QR code. You can print it locally at home, or choose from our premium printed products — elegant cards, acrylic signs, and more — available in our Etsy store.",
               },
               {
                 num: "03",
-                title: "Guests Upload",
-                text: "Guests scan the QR code and privately upload their photos, videos, and heartfelt messages — no app download required.",
+                title: "Display at Your Wedding",
+                text: "Place your QR card or acrylic sign on tables, entrances, or wedding areas. Guests simply scan the code to instantly access your private memory page — no app download required.",
               },
               {
                 num: "04",
-                title: "Receive Memories",
-                text: "All uploads appear instantly in your private owner gallery. View, download, and keep every memory from your special day.",
+                title: "Receive Every Memory",
+                text: "Guests privately upload their photos, videos, and heartfelt messages. Everything appears instantly in your personal owner gallery — yours to view, download, and treasure forever.",
               },
             ].map((card) => (
               <div key={card.num} style={cardStyle}>
@@ -146,10 +143,7 @@ function LandingPage() {
             You can print your QR designs locally or order professionally designed products directly through our Etsy store.
           </p>
 
-          <button
-            onClick={() => window.open(ETSY_URL, "_blank")}
-            style={primaryButton}
-          >
+          <button onClick={() => window.open(ETSY_URL, "_blank")} style={primaryButton}>
             SHOP ON ETSY
           </button>
         </div>
@@ -175,7 +169,7 @@ function LandingPage() {
             {[
               {
                 title: "Private Uploads",
-                text: "Uploaded photos, videos, and messages are only visible to the event owner — never public.",
+                text: "Uploaded photos, videos, and messages are only visible to the event owner — never public, never shared.",
               },
               {
                 title: "Hidden Event Pages",
@@ -183,7 +177,7 @@ function LandingPage() {
               },
               {
                 title: "Secure Memory Vault",
-                text: "Your wedding memories are safely stored in your private WALNORY gallery experience.",
+                text: "Your wedding memories are safely stored in your private WALNORY gallery — accessible only by you.",
               },
             ].map((card) => (
               <div key={card.title} style={cardStyle}>
@@ -213,10 +207,7 @@ function LandingPage() {
             <span style={{ cursor: "pointer" }}>Terms of Service</span>
             <span style={{ cursor: "pointer" }}>KVKK</span>
             <span style={{ cursor: "pointer" }}>Contact</span>
-            <span
-              onClick={() => window.open(ETSY_URL, "_blank")}
-              style={{ cursor: "pointer", fontWeight: 600 }}
-            >
+            <span onClick={() => window.open(ETSY_URL, "_blank")} style={{ cursor: "pointer", fontWeight: 600 }}>
               Etsy
             </span>
           </div>
