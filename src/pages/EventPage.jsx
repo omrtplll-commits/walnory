@@ -4,7 +4,6 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useParams } from "react-router-dom";
 import { db, storage } from "../firebase";
 
-// Resmi sıkıştır
 const compressImage = (file) => {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -48,9 +47,7 @@ function EventPage() {
 
   useEffect(() => {
     const key = `walnory_uploaded_${id}`;
-    if (localStorage.getItem(key)) {
-      setAlreadyUploaded(true);
-    }
+    if (localStorage.getItem(key)) setAlreadyUploaded(true);
     fetchEvent();
   }, [id]);
 
@@ -96,7 +93,6 @@ function EventPage() {
       setUploading(true);
       const uploadedFiles = [];
 
-      // Fotoğrafları sıkıştır ve yükle
       for (let i = 0; i < photos.length; i++) {
         setUploadProgress(`Uploading photo ${i + 1} of ${photos.length}...`);
         const compressed = await compressImage(photos[i]);
@@ -106,7 +102,6 @@ function EventPage() {
         uploadedFiles.push({ url, type: "image" });
       }
 
-      // Videoyu yükle
       if (video) {
         setUploadProgress("Uploading video...");
         const storageRef = ref(storage, `memories/${id}/${Date.now()}-${video.name}`);
@@ -163,7 +158,7 @@ function EventPage() {
             You've Already Shared Your Memories
           </h2>
           <p style={{ color: "#7d736b", lineHeight: 1.8, fontSize: "15px" }}>
-            Thank you for being part of this special day. Your photos, video and message have already been shared with the couple. 💕
+            Thank you for being part of this special day. 💕
           </p>
         </div>
       </div>
@@ -174,7 +169,6 @@ function EventPage() {
     <div style={{ minHeight: "100vh", background: "linear-gradient(to bottom,#f8f5f0,#efe7dc)", padding: "16px", boxSizing: "border-box" }}>
       <div style={{ width: "100%", maxWidth: "680px", margin: "0 auto", background: "white", borderRadius: "26px", padding: "28px 22px", boxShadow: "0 20px 50px rgba(0,0,0,0.08)", boxSizing: "border-box" }}>
 
-        {/* Başlık */}
         <div style={{ textAlign: "center", marginBottom: "28px" }}>
           <div style={{ letterSpacing: "4px", fontSize: "11px", opacity: 0.4, marginBottom: "12px" }}>PRIVATE EVENT</div>
           <h1 style={{ fontSize: "clamp(26px,8vw,46px)", lineHeight: 1.1, marginBottom: "10px", color: "#2d2926", wordBreak: "break-word" }}>
@@ -210,64 +204,58 @@ function EventPage() {
               style={{ ...inputStyle, resize: "none" }}
             />
 
-            {/* Fotoğraf seçici */}
+            {/* Fotoğraf */}
             <div style={{ background: "#f8f5f0", borderRadius: "18px", padding: "18px", border: "2px dashed #d8cec2" }}>
-              <div style={{ fontSize: "12px", letterSpacing: "2px", opacity: 0.5, marginBottom: "12px" }}>PHOTOS (MAX 4)</div>
-              <label style={{
-                display: "block",
-                background: "#2d2926",
-                color: "white",
-                borderRadius: "12px",
-                padding: "12px 20px",
-                textAlign: "center",
-                fontSize: "13px",
-                letterSpacing: "1px",
-                cursor: "pointer",
-                marginBottom: "10px",
-              }}>
-                📷 SELECT PHOTOS
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handlePhotoChange}
-                  style={{ display: "none" }}
-                />
-              </label>
-              {photos.length > 0 && (
-                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                  {photos.map((f, i) => (
-                    <div key={i} style={{ background: "white", padding: "8px 12px", borderRadius: "8px", fontSize: "12px", color: "#4f4740", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      📷 {f.name}
-                    </div>
-                  ))}
+              <div style={{ fontSize: "12px", letterSpacing: "2px", opacity: 0.5, marginBottom: "12px" }}>
+                📷 PHOTOS (MAX 4)
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handlePhotoChange}
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  borderRadius: "12px",
+                  background: "#2d2926",
+                  color: "white",
+                  border: "none",
+                  fontSize: "13px",
+                  cursor: "pointer",
+                  marginBottom: photos.length > 0 ? "10px" : "0",
+                  boxSizing: "border-box",
+                }}
+              />
+              {photos.length > 0 && photos.map((f, i) => (
+                <div key={i} style={{ background: "white", padding: "8px 12px", borderRadius: "8px", fontSize: "12px", color: "#4f4740", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginBottom: "4px" }}>
+                  📷 {f.name}
                 </div>
-              )}
+              ))}
             </div>
 
-            {/* Video seçici */}
+            {/* Video */}
             <div style={{ background: "#f8f5f0", borderRadius: "18px", padding: "18px", border: "2px dashed #d8cec2" }}>
-              <div style={{ fontSize: "12px", letterSpacing: "2px", opacity: 0.5, marginBottom: "12px" }}>SHORT VIDEO (MAX 1 — 15-20 SEC)</div>
-              <label style={{
-                display: "block",
-                background: video ? "#4a4540" : "#2d2926",
-                color: "white",
-                borderRadius: "12px",
-                padding: "12px 20px",
-                textAlign: "center",
-                fontSize: "13px",
-                letterSpacing: "1px",
-                cursor: "pointer",
-                marginBottom: "10px",
-              }}>
-                🎥 SELECT VIDEO
-                <input
-                  type="file"
-                  accept="video/*"
-                  onChange={handleVideoChange}
-                  style={{ display: "none" }}
-                />
-              </label>
+              <div style={{ fontSize: "12px", letterSpacing: "2px", opacity: 0.5, marginBottom: "12px" }}>
+                🎥 SHORT VIDEO (MAX 1 — 15-20 SEC)
+              </div>
+              <input
+                type="file"
+                accept="video/*"
+                onChange={handleVideoChange}
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  borderRadius: "12px",
+                  background: "#2d2926",
+                  color: "white",
+                  border: "none",
+                  fontSize: "13px",
+                  cursor: "pointer",
+                  marginBottom: video ? "10px" : "0",
+                  boxSizing: "border-box",
+                }}
+              />
               {video && (
                 <div style={{ background: "white", padding: "8px 12px", borderRadius: "8px", fontSize: "12px", color: "#4f4740", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   🎥 {video.name}
@@ -275,7 +263,6 @@ function EventPage() {
               )}
             </div>
 
-            {/* Upload butonu */}
             <button
               onClick={handleUpload}
               disabled={uploading}
