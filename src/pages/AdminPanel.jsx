@@ -106,11 +106,11 @@ function AdminPanel() {
   };
 
   const exportCSV = () => {
-    let csv = "Token,Package,Used,UsedBy,UsedAt\n";
+    let csv = "Token\tPackage\tUsed\tUsedBy\tUsedAt\r\n";
     allTokens.forEach((t) => {
-      csv += `${t.id},${t.package || "basic"},${t.used},${t.usedBy || ""},${t.usedAt ? new Date(t.usedAt.seconds * 1000).toLocaleDateString() : ""}\n`;
+      csv += `${t.id}\t${t.package || "basic"}\t${t.used}\t${t.usedBy || ""}\t${t.usedAt ? new Date(t.usedAt.seconds * 1000).toLocaleDateString() : ""}\r\n`;
     });
-    const blob = new Blob([csv], { type: "text/csv" });
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
