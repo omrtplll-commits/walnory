@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import * as XLSX from "xlsx";
 import { collection, doc, setDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -106,17 +107,24 @@ function AdminPanel() {
   };
 
   const exportCSV = () => {
-    let csv = "Token;Package;Used;UsedBy;UsedAt\r\n";
-    allTokens.forEach((t) => {
-      csv += `${t.id};${t.package || "basic"};${t.used ? "YES" : "NO"};${t.usedBy || ""};${t.usedAt ? new Date(t.usedAt.seconds * 1000).toLocaleDateString() : ""}\r\n`;
-    });
-    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `walnory-tokens-${Date.now()}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+    const data = allTokens.map((t) => ({
+      Token: t.id,
+      Package: (t.package || "basic").toUpperCase(),
+      Status: t.used ? "USED" : "AVAILABLE",
+      UsedBy: t.usedBy || "",
+      UsedAt: t.usedAt ? new Date(t.usedAt.seconds * 1000).toLocaleDateString() : "",
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Tokens");
+
+    // Kolon genişlikleri
+    ws["!cols"] = [
+      { wch: 20 }, { wch: 12 }, { wch: 12 }, { wch: 30 }, { wch: 14 }
+    ];
+
+    XLSX.writeFile(wb, `walnory-tokens-${Date.now()}.xlsx`);
   };
 
   if (!authenticated) {
