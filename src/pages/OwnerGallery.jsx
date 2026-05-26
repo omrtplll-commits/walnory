@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 import JSZip from "jszip";
+import { getTranslation } from "../translations";
+
+const t = getTranslation();
 
 function OwnerGallery() {
   const { ownerId } = useParams();
@@ -64,7 +67,7 @@ function OwnerGallery() {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Download failed:", error);
-      alert("Download failed. Please try again.");
+      alert(t.downloadFailed);
     }
   };
 
@@ -75,41 +78,32 @@ function OwnerGallery() {
       let fileCount = 0;
       let total = 0;
 
-      // Toplam dosya sayısını hesapla
       memories.forEach((m) => { total += (m.files?.length || 0); });
 
       for (const memory of memories) {
         if (!memory.files) continue;
-
         const guestFolder = zip.folder(memory.guestName || "guest");
 
-        // Mesajı ekle
         if (memory.message) {
-          guestFolder.file(
-            "message.txt",
-            `Guest: ${memory.guestName}\n\nMessage:\n${memory.message}`
-          );
+          guestFolder.file("message.txt", `Guest: ${memory.guestName}\n\nMessage:\n${memory.message}`);
         }
 
-        // Dosyaları ekle
         for (let i = 0; i < memory.files.length; i++) {
           const file = memory.files[i];
           fileCount++;
-          setZipProgress(`Preparing ${fileCount} of ${total} files...`);
-
+          setZipProgress(`${t.preparingFiles.replace("...", "")} ${fileCount} / ${total}...`);
           try {
             const response = await fetch(file.url);
             const blob = await response.blob();
             const extension = file.type === "video" ? "mp4" : "jpg";
-            const fileName = `${file.type}-${i + 1}.${extension}`;
-            guestFolder.file(fileName, blob);
+            guestFolder.file(`${file.type}-${i + 1}.${extension}`, blob);
           } catch (err) {
             console.error("File fetch error:", err);
           }
         }
       }
 
-      setZipProgress("Creating ZIP file...");
+      setZipProgress(t.creatingZip);
       const zipBlob = await zip.generateAsync({ type: "blob" });
       const url = URL.createObjectURL(zipBlob);
       const link = document.createElement("a");
@@ -122,7 +116,7 @@ function OwnerGallery() {
 
     } catch (error) {
       console.error("ZIP failed:", error);
-      alert("ZIP download failed. Please try again.");
+      alert(t.zipFailed);
     } finally {
       setZipping(false);
       setZipProgress("");
@@ -130,73 +124,45 @@ function OwnerGallery() {
   };
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "linear-gradient(to bottom, #f8f5f0, #efe7dc)",
-      padding: "40px 16px",
-      fontFamily: "'Georgia', serif",
-    }}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(to bottom, #f8f5f0, #efe7dc)", padding: "40px 16px", fontFamily: "'Georgia', serif" }}>
       <div style={{ maxWidth: "860px", margin: "0 auto" }}>
 
-        {/* Başlık */}
         <div style={{ textAlign: "center", marginBottom: "40px" }}>
           <div style={{ letterSpacing: "5px", fontSize: "10px", opacity: 0.4, marginBottom: "16px", textTransform: "uppercase", fontFamily: "sans-serif" }}>
-            Private Owner Gallery
+            {t.privateOwnerGallery}
           </div>
           <h1 style={{ fontSize: "clamp(28px, 5vw, 48px)", marginBottom: "14px", color: "#2d2926", fontWeight: 700, lineHeight: 1.2 }}>
-            Your Wedding Memories
+            {t.yourWeddingMemories}
           </h1>
           <div style={{ width: "40px", height: "1px", background: "#c4b8a8", margin: "0 auto 16px" }} />
           <p style={{ color: "#7d736b", fontSize: "14px", fontFamily: "sans-serif", marginBottom: "24px" }}>
-            All guest photos, videos and messages — private to you.
+            {t.allGuestPrivate}
           </p>
 
-          {/* ZIP Download butonu */}
           {memories.length > 0 && (
             <button
               onClick={downloadAllAsZip}
               disabled={zipping}
-              style={{
-                background: zipping ? "#9d948c" : "#2d2926",
-                color: "white",
-                border: "none",
-                borderRadius: "12px",
-                padding: "12px 28px",
-                fontSize: "12px",
-                letterSpacing: "1.5px",
-                cursor: zipping ? "not-allowed" : "pointer",
-                fontFamily: "sans-serif",
-                textTransform: "uppercase",
-              }}
+              style={{ background: zipping ? "#9d948c" : "#2d2926", color: "white", border: "none", borderRadius: "12px", padding: "12px 28px", fontSize: "12px", letterSpacing: "1.5px", cursor: zipping ? "not-allowed" : "pointer", fontFamily: "sans-serif", textTransform: "uppercase" }}
             >
-              {zipping ? zipProgress || "PREPARING..." : "⬇ DOWNLOAD ALL AS ZIP"}
+              {zipping ? zipProgress || t.preparing : t.downloadAllZip}
             </button>
           )}
         </div>
 
-        {/* Kartlar */}
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           {memories.length === 0 && (
             <div style={{ textAlign: "center", color: "#9d948c", fontSize: "14px", padding: "80px 0", fontFamily: "sans-serif" }}>
-              No memories uploaded yet.
+              {t.noMemories}
             </div>
           )}
 
           {memories.map((memory) => (
-            <div key={memory.id} style={{
-              background: "rgba(255,255,255,0.85)",
-              backdropFilter: "blur(12px)",
-              borderRadius: "20px",
-              padding: "28px",
-              boxShadow: "0 2px 24px rgba(0,0,0,0.06)",
-              border: "1px solid rgba(196,184,168,0.25)",
-            }}>
+            <div key={memory.id} style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(12px)", borderRadius: "20px", padding: "28px", boxShadow: "0 2px 24px rgba(0,0,0,0.06)", border: "1px solid rgba(196,184,168,0.25)" }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "24px", alignItems: "start", marginBottom: "20px" }}>
-
-                {/* Sol: isim + mesaj */}
                 <div>
                   <div style={{ fontSize: "9px", letterSpacing: "3px", opacity: 0.35, marginBottom: "8px", textTransform: "uppercase", fontFamily: "sans-serif" }}>
-                    Guest
+                    {t.guest}
                   </div>
                   <div style={{ fontSize: "24px", fontWeight: 700, color: "#2d2926", marginBottom: "10px", textTransform: "capitalize" }}>
                     {memory.guestName}
@@ -208,15 +174,10 @@ function OwnerGallery() {
                   )}
                 </div>
 
-                {/* Sağ: thumbnail'lar */}
                 {memory.files && memory.files.length > 0 && (
                   <div style={{ display: "grid", gridTemplateColumns: memory.files.length === 1 ? "1fr" : "repeat(2, 1fr)", gap: "8px" }}>
                     {memory.files.map((file, index) => (
-                      <div
-                        key={index}
-                        onClick={() => setSelectedMedia(file)}
-                        style={{ width: "110px", height: "110px", borderRadius: "14px", overflow: "hidden", cursor: "pointer", background: "#ece7df", position: "relative", flexShrink: 0 }}
-                      >
+                      <div key={index} onClick={() => setSelectedMedia(file)} style={{ width: "110px", height: "110px", borderRadius: "14px", overflow: "hidden", cursor: "pointer", background: "#ece7df", position: "relative" }}>
                         {file.type === "image" ? (
                           <img src={file.url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                         ) : (
@@ -239,16 +200,13 @@ function OwnerGallery() {
 
               <div style={{ height: "1px", background: "rgba(196,184,168,0.3)", marginBottom: "18px" }} />
 
-              {/* Download butonları */}
               <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                 {memory.message && (
-                  <button onClick={() => downloadMessage(memory)} style={outlineBtn}>
-                    ↓ Message
-                  </button>
+                  <button onClick={() => downloadMessage(memory)} style={outlineBtn}>{t.downloadMessage}</button>
                 )}
                 {memory.files?.map((file, index) => (
                   <button key={index} onClick={() => downloadFile(file.url, file.type)} style={solidBtn}>
-                    ↓ {file.type === "image" ? "Photo" : "Video"}{memory.files.length > 1 ? ` ${index + 1}` : ""}
+                    {file.type === "image" ? t.downloadPhoto : t.downloadVideo}{memory.files.length > 1 ? ` ${index + 1}` : ""}
                   </button>
                 ))}
               </div>
@@ -257,7 +215,6 @@ function OwnerGallery() {
         </div>
       </div>
 
-      {/* Modal */}
       {selectedMedia && (
         <div onClick={() => setSelectedMedia(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.92)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999, padding: "20px" }}>
           <div style={{ position: "absolute", top: "24px", right: "28px", color: "white", fontSize: "24px", cursor: "pointer", opacity: 0.6 }}>✕</div>
@@ -269,7 +226,7 @@ function OwnerGallery() {
             </video>
           )}
           <button onClick={(e) => { e.stopPropagation(); downloadFile(selectedMedia.url, selectedMedia.type); }} style={{ position: "absolute", bottom: "28px", background: "white", color: "#2d2926", border: "none", borderRadius: "10px", padding: "12px 32px", fontSize: "11px", letterSpacing: "2px", cursor: "pointer", fontFamily: "sans-serif", textTransform: "uppercase" }}>
-            ↓ Download
+            {t.downloadFile}
           </button>
         </div>
       )}
