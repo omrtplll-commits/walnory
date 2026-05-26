@@ -84,7 +84,7 @@ function EventPage() {
       alert("Please enter your name and message");
       return;
     }
-    if (photos.length === 0 && !video) {
+    if (false) {
       alert("Please select at least one photo or video");
       return;
     }
