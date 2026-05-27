@@ -6,6 +6,8 @@ const t = getTranslation();
 function LandingPage() {
   const navigate = useNavigate();
   const ETSY_URL = "https://www.etsy.com/shop/walnory";
+  const TR_URL = "https://www.tabelastudio.com.tr";
+  const isTurkish = navigator.language?.toLowerCase().startsWith("tr");
 
   return (
     <div style={{ background: "linear-gradient(to bottom,#f8f5f0,#efe7dc)", color: "#2d2926", overflowX: "hidden" }}>
@@ -23,6 +25,11 @@ function LandingPage() {
           <div style={{ display: "flex", justifyContent: "center", gap: "16px", flexWrap: "wrap", marginBottom: "50px" }}>
             <button onClick={() => navigate("/create")} style={primaryButton}>{t.createEvent}</button>
             <button onClick={() => window.open(ETSY_URL, "_blank")} style={secondaryButton}>{t.visitEtsy}</button>
+            {isTurkish && (
+              <button onClick={() => window.open(TR_URL, "_blank")} style={{ ...secondaryButton, background: "#2d2926", color: "white", border: "none" }}>
+                🇹🇷 Türkiye'den Satın Al
+              </button>
+            )}
             <button style={{ ...secondaryButton, opacity: 0.4, cursor: "default" }}>{t.watchDemo}</button>
           </div>
           <div style={{ opacity: 0.65, fontSize: "clamp(14px,3vw,16px)", lineHeight: "2", maxWidth: "750px", margin: "0 auto" }}>
@@ -57,7 +64,14 @@ function LandingPage() {
           <h2 style={{ fontSize: "clamp(36px,8vw,54px)", marginBottom: "28px" }}>{t.elegantDisplays}</h2>
           <p style={{ lineHeight: "2", opacity: 0.72, fontSize: "clamp(15px,3vw,18px)", marginBottom: "24px" }}>{t.physicalDesc1}</p>
           <p style={{ lineHeight: "2", opacity: 0.72, fontSize: "clamp(15px,3vw,18px)", marginBottom: "36px" }}>{t.physicalDesc2}</p>
-          <button onClick={() => window.open(ETSY_URL, "_blank")} style={primaryButton}>{t.shopEtsy}</button>
+          <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+            <button onClick={() => window.open(ETSY_URL, "_blank")} style={primaryButton}>{t.shopEtsy}</button>
+            {isTurkish && (
+              <button onClick={() => window.open(TR_URL, "_blank")} style={{ ...primaryButton, background: "#8b7355" }}>
+                🇹🇷 Türkiye'den Satın Al
+              </button>
+            )}
+          </div>
         </div>
       </section>
 
