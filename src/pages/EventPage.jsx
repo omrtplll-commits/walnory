@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { doc, getDoc, collection, addDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useParams } from "react-router-dom";
 import { db, storage } from "../firebase";
 import { getTranslation } from "../translations";
@@ -44,7 +44,8 @@ function EventPage() {
   const [photos, setPhotos] = useState([]);
   const [video, setVideo] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState("");
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStep, setUploadStep] = useState("");
   const [uploaded, setUploaded] = useState(false);
   const [alreadyUploaded, setAlreadyUploaded] = useState(false);
 
@@ -69,7 +70,7 @@ function EventPage() {
   const handlePhotoChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 4) {
-      alert(t.photosMax);
+      alert("Maximum 4 photos allowed");
       e.target.value = "";
       return;
     }
@@ -79,7 +80,33 @@ function EventPage() {
   const handleVideoChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    const maxSize = 100 * 1024 * 1024; // 100MB
+    if (file.size > maxSize) {
+      alert("Video is too large. Please select a video under 100MB.");
+      e.target.value = "";
+      return;
+    }
     setVideo(file);
+  };
+
+  const uploadFileWithProgress = (file, path, onProgress) => {
+    return new Promise((resolve, reject) => {
+      const storageRef = ref(storage, path);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          onProgress(progress);
+        },
+        (error) => reject(error),
+        async () => {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve(url);
+        }
+      );
+    });
   };
 
   const handleUpload = async () => {
@@ -90,26 +117,45 @@ function EventPage() {
 
     try {
       setUploading(true);
+      setUploadProgress(0);
       const uploadedFiles = [];
+      const totalFiles = photos.length + (video ? 1 : 0);
+      let completedFiles = 0;
 
+      // Fotoğrafları yükle
       for (let i = 0; i < photos.length; i++) {
-        setUploadProgress(`${t.uploadingPhoto} ${i + 1} ${t.uploadingOf} ${photos.length}...`);
+        setUploadStep(`${t.uploadingPhoto} ${i + 1} ${t.uploadingOf} ${photos.length}...`);
         const compressed = await compressImage(photos[i]);
-        const storageRef = ref(storage, `memories/${id}/${Date.now()}-${compressed.name}`);
-        await uploadBytes(storageRef, compressed);
-        const url = await getDownloadURL(storageRef);
+        const url = await uploadFileWithProgress(
+          compressed,
+          `memories/${id}/${Date.now()}-${compressed.name}`,
+          (progress) => {
+            const overall = Math.round(((completedFiles + progress / 100) / totalFiles) * 100);
+            setUploadProgress(overall);
+          }
+        );
         uploadedFiles.push({ url, type: "image" });
+        completedFiles++;
+        setUploadProgress(Math.round((completedFiles / totalFiles) * 100));
       }
 
+      // Videoyu yükle
       if (video) {
-        setUploadProgress(t.uploadingVideo);
-        const storageRef = ref(storage, `memories/${id}/${Date.now()}-${video.name}`);
-        await uploadBytes(storageRef, video);
-        const url = await getDownloadURL(storageRef);
+        setUploadStep(t.uploadingVideo);
+        const url = await uploadFileWithProgress(
+          video,
+          `memories/${id}/${Date.now()}-${video.name}`,
+          (progress) => {
+            const overall = Math.round(((completedFiles + progress / 100) / totalFiles) * 100);
+            setUploadProgress(overall);
+          }
+        );
         uploadedFiles.push({ url, type: "video" });
+        completedFiles++;
+        setUploadProgress(100);
       }
 
-      setUploadProgress(t.savingMemories);
+      setUploadStep(t.savingMemories);
 
       await addDoc(collection(db, "memories"), {
         eventId: id,
@@ -127,7 +173,8 @@ function EventPage() {
       alert(t.uploadFailed);
     } finally {
       setUploading(false);
-      setUploadProgress("");
+      setUploadProgress(0);
+      setUploadStep("");
     }
   };
 
@@ -181,12 +228,14 @@ function EventPage() {
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+
             <input
               placeholder={t.yourName}
               value={guestName}
               onChange={(e) => setGuestName(e.target.value)}
               style={inputStyle}
             />
+
             <textarea
               placeholder={t.leaveMessage}
               value={message}
@@ -223,24 +272,38 @@ function EventPage() {
               />
               {video && (
                 <div style={{ background: "white", padding: "8px 12px", borderRadius: "8px", fontSize: "12px", color: "#4f4740", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  🎥 {video.name}
+                  🎥 {video.name} — {(video.size / (1024 * 1024)).toFixed(1)} MB
                 </div>
               )}
             </div>
 
+            {/* Upload butonu */}
             <button
               onClick={handleUpload}
               disabled={uploading}
               style={{ padding: "18px", borderRadius: "18px", border: "none", background: "#2d2926", color: "white", fontSize: "14px", letterSpacing: "1px", cursor: uploading ? "not-allowed" : "pointer", opacity: uploading ? 0.8 : 1, width: "100%" }}
             >
-              {uploading ? uploadProgress || t.uploading : t.uploadMemories}
+              {uploading ? uploadStep || t.uploading : t.uploadMemories}
             </button>
 
+            {/* Progress bar */}
             {uploading && (
-              <div style={{ textAlign: "center", fontSize: "13px", color: "#9d948c", marginTop: "-8px" }}>
-                {t.pleaseWait}
+              <div style={{ marginTop: "-8px" }}>
+                <div style={{ background: "#f0ebe4", borderRadius: "10px", height: "8px", overflow: "hidden" }}>
+                  <div style={{
+                    height: "100%",
+                    background: "linear-gradient(to right, #2d2926, #6b5e54)",
+                    borderRadius: "10px",
+                    width: `${uploadProgress}%`,
+                    transition: "width 0.3s ease",
+                  }} />
+                </div>
+                <div style={{ textAlign: "center", fontSize: "12px", color: "#9d948c", marginTop: "6px" }}>
+                  {uploadProgress}% — {t.pleaseWait}
+                </div>
               </div>
             )}
+
           </div>
         )}
       </div>
