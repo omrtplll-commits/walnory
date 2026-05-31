@@ -3,6 +3,9 @@ import { doc, getDoc, collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useParams } from "react-router-dom";
 import { db, storage } from "../firebase";
+import { getTranslation } from "../translations";
+
+const t = getTranslation();
 
 // Renk temaları
 const THEMES = {
@@ -15,7 +18,7 @@ const THEMES = {
     dashed: "#d8cec2",
     inputBg: "#f8f5f0",
     btnBg: "#2d2926",
-    label: "PRIVATE EVENT",
+    label: t.eventLabels?.wedding || "PRIVATE EVENT",
   },
   babyshower_girl: {
     bg: "linear-gradient(to bottom, #fff0f5, #ffe4ee)",
@@ -78,17 +81,18 @@ const getTheme = (type) => THEMES[type] || THEMES.wedding;
 
 const getWelcomeMessage = (eventData) => {
   const type = eventData?.eventType || "wedding";
+  const msgs = t.welcomeMessages;
   switch (type) {
-    case "wedding": return "Share your memories with us";
+    case "wedding": return msgs.wedding;
     case "babyshower_girl":
     case "babyshower_boy":
     case "babyshower_surprise":
-      return eventData?.babyName ? `Leave a message for baby ${eventData.babyName}` : "Leave a message for the baby";
+      return eventData?.babyName ? `${msgs.babyshower} ${eventData.babyName}` : msgs.babyshower;
     case "birthday":
-      return eventData?.birthdayName ? `Wish ${eventData.birthdayName} a happy birthday! 🎉` : "Share your birthday wishes";
+      return eventData?.birthdayName ? `${msgs.birthday} ${eventData.birthdayName}! 🎉` : msgs.birthday;
     case "corporate":
-      return eventData?.eventName ? `Share your moments from ${eventData.eventName}` : "Share your moments";
-    default: return "Share your memories with us";
+      return eventData?.eventName ? `${msgs.corporate} ${eventData.eventName}` : msgs.corporate;
+    default: return msgs.wedding;
   }
 };
 

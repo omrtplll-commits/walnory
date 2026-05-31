@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 import JSZip from "jszip";
+import { getTranslation } from "../translations";
+
+const t = getTranslation();
 
 const THEMES = {
   wedding: { bg: "linear-gradient(to bottom, #f8f5f0, #efe7dc)", accent: "#2d2926", sub: "#7d736b", card: "rgba(255,255,255,0.85)", btn: "#2d2926" },
@@ -17,14 +20,15 @@ const getTheme = (type) => THEMES[type] || THEMES.wedding;
 
 const getGalleryTitle = (eventData) => {
   const type = eventData?.eventType || "wedding";
+  const titles = t.galleryTitles;
   switch (type) {
-    case "wedding": return "Your Wedding Memories";
+    case "wedding": return titles.wedding;
     case "babyshower_girl":
     case "babyshower_boy":
-    case "babyshower_surprise": return eventData?.babyName ? `Baby ${eventData.babyName}'s Memories` : "Baby Shower Memories";
-    case "birthday": return eventData?.birthdayName ? `${eventData.birthdayName}'s Birthday Memories` : "Birthday Memories";
-    case "corporate": return eventData?.eventName ? `${eventData.eventName} Memories` : "Event Memories";
-    default: return "Your Memories";
+    case "babyshower_surprise": return eventData?.babyName ? `Baby ${eventData.babyName}'s Memories` : titles.babyshower;
+    case "birthday": return eventData?.birthdayName ? `${eventData.birthdayName}'s ${titles.birthday}` : titles.birthday;
+    case "corporate": return eventData?.eventName ? `${eventData.eventName} Memories` : titles.corporate;
+    default: return titles.wedding;
   }
 };
 
@@ -72,7 +76,7 @@ function OwnerGallery() {
       const link = document.createElement("a");
       link.href = url; link.download = `walnory-memory-${Date.now()}.${extension}`;
       document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
-    } catch (error) { alert("Download failed. Please try again."); }
+    } catch (error) { alert(t.downloadFailed); }
   };
 
   const downloadAllAsZip = async () => {
@@ -96,13 +100,13 @@ function OwnerGallery() {
         }
       }
 
-      setZipProgress("Creating ZIP...");
+      setZipProgress(t.creatingZip);
       const zipBlob = await zip.generateAsync({ type: "blob" });
       const url = URL.createObjectURL(zipBlob);
       const link = document.createElement("a");
       link.href = url; link.download = `walnory-memories-${Date.now()}.zip`;
       document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
-    } catch (e) { alert("ZIP failed. Please try again."); }
+    } catch (e) { alert(t.zipFailed); }
     finally { setZipping(false); setZipProgress(""); }
   };
 
@@ -124,7 +128,7 @@ function OwnerGallery() {
 
           {memories.length > 0 && (
             <button onClick={downloadAllAsZip} disabled={zipping} style={{ background: zipping ? "#9d948c" : theme.btn, color: "white", border: "none", borderRadius: "12px", padding: "12px 28px", fontSize: "12px", letterSpacing: "1.5px", cursor: zipping ? "not-allowed" : "pointer", fontFamily: "sans-serif", textTransform: "uppercase" }}>
-              {zipping ? zipProgress || "PREPARING..." : "⬇ DOWNLOAD ALL AS ZIP"}
+              {zipping ? zipProgress || t.preparing : t.downloadAllZip}
             </button>
           )}
         </div>
