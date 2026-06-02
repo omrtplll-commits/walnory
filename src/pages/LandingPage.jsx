@@ -40,11 +40,11 @@ function LandingPage() {
         alt=""
         style={{
           position: "absolute",
-          top: "50%",
+          top: "5%",
           left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "clamp(400px, 50%, 700px)",
-          opacity: 0.08,
+          transform: "translateX(-50%)",
+          width: "clamp(500px, 60%, 800px)",
+          opacity: 0.18,
           pointerEvents: "none",
           zIndex: 0,
           userSelect: "none",
