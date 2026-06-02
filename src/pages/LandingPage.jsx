@@ -34,20 +34,53 @@ function LandingPage() {
   return (
     <div style={{ background: "linear-gradient(to bottom,#f8f5f0,#efe7dc)", color: "#2d2926", overflowX: "hidden", position: "relative" }}>
 
-      {/* Dekoratif arka plan görseli */}
+      {/* Gelin damat - ortada */}
       <img
-        src="https://firebasestorage.googleapis.com/v0/b/walnory.firebasestorage.app/o/Ads%C4%B1z%20tasar%C4%B1m.png?alt=media&token=95805446-1495-4968-bf2b-79cde70088be"
+        src="https://firebasestorage.googleapis.com/v0/b/walnory.firebasestorage.app/o/1.png?alt=media&token=cfa88e65-e792-4532-b90d-239f25efac2d"
         alt=""
         style={{
           position: "absolute",
-          top: "5%",
+          top: "0%",
           left: "50%",
           transform: "translateX(-50%)",
-          width: "clamp(500px, 60%, 800px)",
-          opacity: 0.18,
+          width: "clamp(280px, 30%, 420px)",
+          opacity: 0.12,
           pointerEvents: "none",
           zIndex: 0,
           userSelect: "none",
+        }}
+      />
+
+      {/* İkonlar - sol kenar */}
+      <img
+        src="https://firebasestorage.googleapis.com/v0/b/walnory.firebasestorage.app/o/2.png?alt=media&token=c25286cb-ea13-4771-b23a-dac4a5d0d292"
+        alt=""
+        style={{
+          position: "absolute",
+          top: "0%",
+          left: "-8%",
+          width: "clamp(200px, 22%, 320px)",
+          opacity: 0.1,
+          pointerEvents: "none",
+          zIndex: 0,
+          userSelect: "none",
+        }}
+      />
+
+      {/* İkonlar - sağ kenar (ters) */}
+      <img
+        src="https://firebasestorage.googleapis.com/v0/b/walnory.firebasestorage.app/o/2.png?alt=media&token=c25286cb-ea13-4771-b23a-dac4a5d0d292"
+        alt=""
+        style={{
+          position: "absolute",
+          top: "0%",
+          right: "-8%",
+          width: "clamp(200px, 22%, 320px)",
+          opacity: 0.1,
+          pointerEvents: "none",
+          zIndex: 0,
+          userSelect: "none",
+          transform: "scaleX(-1)",
         }}
       />
 
