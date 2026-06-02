@@ -32,31 +32,13 @@ function LandingPage() {
   const H = ({ children }) => <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#2d2926", marginTop: "20px", marginBottom: "8px" }}>{children}</h3>;
 
   return (
-    <div style={{ background: "linear-gradient(to bottom,#f8f5f0,#efe7dc)", color: "#2d2926", overflowX: "hidden", position: "relative" }}>
+    <div style={{ background: "linear-gradient(to bottom,#f8f5f0,#efe7dc)", color: "#2d2926", overflowX: "hidden" }}>
 
-      {/* Gelin damat - ortada soluk */}
-      <img
-        src="https://firebasestorage.googleapis.com/v0/b/walnory.firebasestorage.app/o/1.png?alt=media&token=cfa88e65-e792-4532-b90d-239f25efac2d"
-        alt=""
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          height: "85%",
-          width: "auto",
-          opacity: 0.1,
-          pointerEvents: "none",
-          zIndex: 0,
-          userSelect: "none",
-        }}
-      />
 
 
       
 
-      {/* İçerik z-index */}
-      <div style={{ position: "relative", zIndex: 1 }}>
+      
 
       {/* HERO */}
       <section style={{ padding: "90px 18px 80px" }}>
@@ -233,7 +215,6 @@ function LandingPage() {
         </Modal>
       )}
 
-      </div>
     </div>
   );
 }
