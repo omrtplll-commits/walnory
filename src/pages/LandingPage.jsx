@@ -32,7 +32,88 @@ function LandingPage() {
   const H = ({ children }) => <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#2d2926", marginTop: "20px", marginBottom: "8px" }}>{children}</h3>;
 
   return (
-    <div style={{ background: "linear-gradient(to bottom,#f8f5f0,#efe7dc)", color: "#2d2926", overflowX: "hidden" }}>
+    <div style={{ background: "linear-gradient(to bottom,#f8f5f0,#efe7dc)", color: "#2d2926", overflowX: "hidden", position: "relative" }}>
+
+      {/* Dekoratif arka plan görseli */}
+      <img
+        src="https://firebasestorage.googleapis.com/v0/b/walnory.firebasestorage.app/o/Ads%C4%B1z%20tasar%C4%B1m.png?alt=media&token=95805446-1495-4968-bf2b-79cde70088be"
+        alt=""
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "clamp(400px, 50%, 700px)",
+          opacity: 0.08,
+          pointerEvents: "none",
+          zIndex: 0,
+          userSelect: "none",
+        }}
+      />
+
+      {/* Dekoratif SVG arka plan */}
+      <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0 }} viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#c4b8a8" strokeWidth="0.9" fill="none" opacity="0.22">
+
+          {/* Sol üst: Düğün halkası */}
+          <circle cx="100" cy="120" r="38"/>
+          <circle cx="138" cy="120" r="38"/>
+
+          {/* Sol alt: Bebek ayağı - düzeltilmiş */}
+          <ellipse cx="80" cy="700" rx="22" ry="28"/>
+          {/* 5 parmak - küçük oval, üstte */}
+          <ellipse cx="52" cy="672" rx="7" ry="9"/>
+          <ellipse cx="66" cy="662" rx="7" ry="9"/>
+          <ellipse cx="82" cy="658" rx="7" ry="9"/>
+          <ellipse cx="97" cy="662" rx="7" ry="9"/>
+          <ellipse cx="108" cy="672" rx="6" ry="8"/>
+
+          {/* Sağ üst: Pasta */}
+          <rect x="1300" y="60" width="80" height="65" rx="4"/>
+          <rect x="1290" y="120" width="100" height="16" rx="2"/>
+          <line x1="1320" y1="60" x2="1320" y2="42"/>
+          <line x1="1340" y1="60" x2="1340" y2="32"/>
+          <line x1="1360" y1="60" x2="1360" y2="42"/>
+          <circle cx="1320" cy="38" r="4"/>
+          <circle cx="1340" cy="28" r="4"/>
+          <circle cx="1360" cy="38" r="4"/>
+
+          {/* Sağ alt: Kurumsal bina */}
+          <rect x="1310" y="720" width="90" height="100" rx="2"/>
+          <rect x="1322" y="732" width="14" height="16" rx="1"/>
+          <rect x="1344" y="732" width="14" height="16" rx="1"/>
+          <rect x="1366" y="732" width="14" height="16" rx="1"/>
+          <rect x="1322" y="756" width="14" height="16" rx="1"/>
+          <rect x="1344" y="756" width="14" height="16" rx="1"/>
+          <rect x="1366" y="756" width="14" height="16" rx="1"/>
+          <rect x="1322" y="780" width="14" height="40" rx="1"/>
+          <rect x="1366" y="780" width="14" height="40" rx="1"/>
+          <polyline points="1305,720 1355,678 1405,720"/>
+
+          {/* Sol orta: QR köşe elementi */}
+          <rect x="40" y="400" width="55" height="55" rx="4"/>
+          <rect x="49" y="409" width="37" height="37" rx="2"/>
+          <rect x="58" y="418" width="19" height="19" rx="1"/>
+
+          {/* Sağ orta: Kalp */}
+          <path d="M1380 420 Q1380 398 1400 398 Q1420 398 1420 420 Q1420 442 1380 462 Q1340 442 1340 420 Q1340 398 1360 398 Q1380 398 1380 420" fill="none"/>
+
+          {/* Üst küçük yıldızlar */}
+          <path d="M500 40 L504 54 L518 54 L507 63 L511 77 L500 68 L489 77 L493 63 L482 54 L496 54 Z"/>
+          <path d="M900 25 L903 36 L914 36 L906 42 L909 53 L900 47 L891 53 L894 42 L886 36 L897 36 Z"/>
+
+          {/* Noktalı bağlantı çizgileri */}
+        </g>
+        <g stroke="#c4b8a8" strokeWidth="0.5" strokeDasharray="3,10" fill="none" opacity="0.18">
+          <path d="M138 120 Q300 80 500 40"/>
+          <path d="M1300 120 Q1100 80 900 25"/>
+          <path d="M100 680 Q300 650 480 700"/>
+          <path d="M1310 720 Q1100 690 920 720"/>
+        </g>
+      </svg>
+
+      {/* İçerik z-index */}
+      <div style={{ position: "relative", zIndex: 1 }}>
 
       {/* HERO */}
       <section style={{ padding: "90px 18px 80px" }}>
@@ -209,6 +290,7 @@ function LandingPage() {
         </Modal>
       )}
 
+      </div>
     </div>
   );
 }
