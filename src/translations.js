@@ -254,7 +254,7 @@ const translations = {
     heroDesc: "Misafirlerin fotoğraf, video ve duygusal mesajlarını güzelce tasarlanmış bir QR deneyimiyle anında paylaştığı lüks bir anı platformu.",
     visitEtsy: "ETSY MAĞAZAMIZI ZİYARET ET",
     watchDemo: "DEMOİZLE",
-    heroFooter: "Özel gününüzün bir kez yaşandığını biliyoruz — ve her anıyı unutulmaz kılmak için her detayı tasarlıyoruz.",
+    heroFooter: "Özel gününüzün bir kez yaşandığını biliyoruz ve her anıyı unutulmaz kılmak için her detayı tasarlıyoruz.",
     howItWorks: "NASIL ÇALIŞIR",
     elegantEffortless: "Zarif & Zahmetsiz",
     physicalProducts: "FİZİKSEL ÜRÜNLER",
@@ -268,7 +268,7 @@ const translations = {
     termsOfService: "Kullanım Koşulları",
     contact: "İletişim",
     steps: [
-      { num: "01", title: "Satın Al ve Aktifl eştir", text: "Etsy üzerinden WALNORY ürününüzü satın alın. Kısa sürede PDF dosyası alacaksınız." },
+      { num: "01", title: "Satın Al ve Aktifleştir", text: "Etsy üzerinden WALNORY ürününüzü satın alın. Kısa sürede PDF dosyası alacaksınız." },
       { num: "02", title: "QR Oluştur ve Yazdır", text: "Tokenınızı kullanarak etkinlik sayfanızı oluşturun ve QR kodunuzu indirin." },
       { num: "03", title: "Etkinliğinizde Sergileyin", text: "QR kartınızı masalara yerleştirin. Misafirler tarayarak özel anı sayfanıza erişir." },
       { num: "04", title: "Her Anıyı Alın", text: "Misafirler fotoğraf, video ve mesajlarını yükler. Hepsi özel galerinizde görünür." },
@@ -338,7 +338,7 @@ const translations = {
     privacyPolicy: "Politique de Confidentialité", termsOfService: "Conditions d'Utilisation", contact: "Contact",
     steps: [
       { num: "01", title: "Achetez & Activez", text: "Achetez sur Etsy et recevez votre token d'activation." },
-      { num: "02", title: "Créez & Imprimez", text: "Créez votre page et téléchargez votre QR code." },
+      { num: "02", title: "Créez & Imprimez", text: "Créez votre page et téléchargez votre code QR." },
       { num: "03", title: "Affichez", text: "Placez votre carte QR. Les invités scannent pour accéder." },
       { num: "04", title: "Recevez", text: "Les invités téléchargent leurs souvenirs dans votre galerie privée." },
     ],
