@@ -118,7 +118,7 @@ const compressImage = (file) => {
       img.src = e.target.result;
       img.onload = () => {
         const canvas = document.createElement("canvas");
-        const MAX = 1200;
+        const MAX = 1800; // Yüksek kalite baskı için artırıldı (eskisi: 1200)
         let w = img.width, h = img.height;
         if (w > MAX || h > MAX) {
           if (w > h) { h = (h / w) * MAX; w = MAX; }
@@ -126,7 +126,7 @@ const compressImage = (file) => {
         }
         canvas.width = w; canvas.height = h;
         canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-        canvas.toBlob((blob) => resolve(new File([blob], file.name, { type: "image/jpeg" })), "image/jpeg", 0.75);
+        canvas.toBlob((blob) => resolve(new File([blob], file.name, { type: "image/jpeg" })), "image/jpeg", 0.85); // Kalite artırıldı (eskisi: 0.75)
       };
     };
   });
