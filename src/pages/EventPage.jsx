@@ -118,7 +118,7 @@ const compressImage = (file) => {
       img.src = e.target.result;
       img.onload = () => {
         const canvas = document.createElement("canvas");
-        const MAX = 1800; // Yüksek kalite baskı için artırıldı (eskisi: 1200)
+        const MAX = 1800;
         let w = img.width, h = img.height;
         if (w > MAX || h > MAX) {
           if (w > h) { h = (h / w) * MAX; w = MAX; }
@@ -126,7 +126,7 @@ const compressImage = (file) => {
         }
         canvas.width = w; canvas.height = h;
         canvas.getContext("2d").drawImage(img, 0, 0, w, h);
-        canvas.toBlob((blob) => resolve(new File([blob], file.name, { type: "image/jpeg" })), "image/jpeg", 0.85); // Kalite artırıldı (eskisi: 0.75)
+        canvas.toBlob((blob) => resolve(new File([blob], file.name, { type: "image/jpeg" })), "image/jpeg", 0.85);
       };
     };
   });
@@ -168,7 +168,7 @@ function EventPage() {
   });
 
   const handleUpload = async () => {
-    if (!guestName || !message) { alert("Please enter your name and message"); return; }
+    if (!guestName || !message) { alert(t.fillFields); return; }
     try {
       setUploading(true);
       const uploadedFiles = [];
@@ -176,7 +176,7 @@ function EventPage() {
       let done = 0;
 
       for (let i = 0; i < photos.length; i++) {
-        setUploadStep(`Uploading photo ${i + 1} of ${photos.length}...`);
+        setUploadStep(`${t.uploadingPhoto} ${i + 1} ${t.uploadingOf} ${photos.length}...`);
         const compressed = await compressImage(photos[i]);
         const url = await uploadFileWithProgress(compressed, `memories/${id}/${Date.now()}-${compressed.name}`,
           (p) => setUploadProgress(Math.round(((done + p / 100) / total) * 100)));
@@ -186,20 +186,20 @@ function EventPage() {
       }
 
       if (video) {
-        setUploadStep("Uploading video...");
+        setUploadStep(t.uploadingVideo);
         const url = await uploadFileWithProgress(video, `memories/${id}/${Date.now()}-${video.name}`,
           (p) => setUploadProgress(Math.round(((done + p / 100) / total) * 100)));
         uploadedFiles.push({ url, type: "video" });
         setUploadProgress(100);
       }
 
-      setUploadStep("Saving your memories...");
+      setUploadStep(t.savingMemories);
       await addDoc(collection(db, "memories"), { eventId: id, guestName, message, files: uploadedFiles, createdAt: new Date() });
       localStorage.setItem(`walnory_uploaded_${id}`, "true");
       setUploaded(true);
     } catch (e) {
       console.error(e);
-      alert("Upload failed. Please check your connection and try again.");
+      alert(t.uploadFailed);
     } finally { setUploading(false); setUploadProgress(0); setUploadStep(""); }
   };
 
@@ -211,8 +211,8 @@ function EventPage() {
       <div style={{ maxWidth: "680px", width: "100%", background: theme.card, borderRadius: "26px", padding: "48px 28px", boxShadow: "0 20px 50px rgba(0,0,0,0.08)", textAlign: "center" }}>
         <div style={{ fontSize: "48px", marginBottom: "20px" }}>💝</div>
         <div style={{ letterSpacing: "4px", fontSize: "11px", opacity: 0.4, marginBottom: "16px" }}>WALNORY</div>
-        <h2 style={{ fontSize: "26px", color: theme.text, marginBottom: "16px", fontWeight: 500 }}>You've Already Shared Your Memories</h2>
-        <p style={{ color: theme.sub, lineHeight: 1.8, fontSize: "15px" }}>Thank you for being part of this special day. 💕</p>
+        <h2 style={{ fontSize: "26px", color: theme.text, marginBottom: "16px", fontWeight: 500 }}>{t.alreadyShared}</h2>
+        <p style={{ color: theme.sub, lineHeight: 1.8, fontSize: "15px" }}>{t.alreadySharedDesc}</p>
       </div>
     </div>
   );
@@ -233,30 +233,30 @@ function EventPage() {
         {uploaded ? (
           <div style={{ background: theme.inputBg, padding: "40px 24px", borderRadius: "22px", textAlign: "center" }}>
             <div style={{ fontSize: "48px", marginBottom: "16px" }}>💝</div>
-            <h2 style={{ fontSize: "26px", marginBottom: "14px", color: theme.text, fontWeight: 500 }}>Thank You</h2>
-            <p style={{ lineHeight: 1.8, opacity: 0.7, fontSize: "15px", color: theme.text }}>Your memories have been successfully shared.</p>
+            <h2 style={{ fontSize: "26px", marginBottom: "14px", color: theme.text, fontWeight: 500 }}>{t.thankYou}</h2>
+            <p style={{ lineHeight: 1.8, opacity: 0.7, fontSize: "15px", color: theme.text }}>{t.memoriesShared}</p>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-            <input placeholder="Your Name" value={guestName} onChange={(e) => setGuestName(e.target.value)} style={{ ...inputStyle, borderColor: theme.dashed }} />
-            <textarea placeholder="Leave a beautiful message..." value={message} onChange={(e) => setMessage(e.target.value)} rows={4} style={{ ...inputStyle, resize: "none", borderColor: theme.dashed }} />
+            <input placeholder={t.yourName} value={guestName} onChange={(e) => setGuestName(e.target.value)} style={{ ...inputStyle, borderColor: theme.dashed }} />
+            <textarea placeholder={t.leaveMessage} value={message} onChange={(e) => setMessage(e.target.value)} rows={4} style={{ ...inputStyle, resize: "none", borderColor: theme.dashed }} />
 
             <div style={{ background: theme.inputBg, borderRadius: "18px", padding: "18px", border: `2px dashed ${theme.dashed}` }}>
-              <div style={{ fontSize: "12px", letterSpacing: "2px", opacity: 0.5, marginBottom: "12px", color: theme.text }}>📷 PHOTOS (MAX 4)</div>
+              <div style={{ fontSize: "12px", letterSpacing: "2px", opacity: 0.5, marginBottom: "12px", color: theme.text }}>📷 {t.photosMax}</div>
               <input type="file" accept="image/*" multiple onChange={(e) => { const f = Array.from(e.target.files); if (f.length > 4) { alert("Max 4 photos"); e.target.value = ""; return; } setPhotos(f); }}
                 style={{ width: "100%", padding: "12px", borderRadius: "12px", background: theme.btnBg, color: "white", border: "none", fontSize: "13px", cursor: "pointer", boxSizing: "border-box", marginBottom: photos.length > 0 ? "10px" : "0" }} />
               {photos.map((f, i) => <div key={i} style={{ background: "white", padding: "8px 12px", borderRadius: "8px", fontSize: "12px", color: theme.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginBottom: "4px" }}>📷 {f.name}</div>)}
             </div>
 
             <div style={{ background: theme.inputBg, borderRadius: "18px", padding: "18px", border: `2px dashed ${theme.dashed}` }}>
-              <div style={{ fontSize: "12px", letterSpacing: "2px", opacity: 0.5, marginBottom: "12px", color: theme.text }}>🎥 SHORT VIDEO (MAX 1 — 15-20 SEC)</div>
+              <div style={{ fontSize: "12px", letterSpacing: "2px", opacity: 0.5, marginBottom: "12px", color: theme.text }}>🎥 {t.shortVideo}</div>
               <input type="file" accept="video/*" onChange={(e) => { const f = e.target.files[0]; if (!f) return; if (f.size > 100 * 1024 * 1024) { alert("Video too large. Max 100MB."); e.target.value = ""; return; } setVideo(f); }}
                 style={{ width: "100%", padding: "12px", borderRadius: "12px", background: theme.btnBg, color: "white", border: "none", fontSize: "13px", cursor: "pointer", boxSizing: "border-box", marginBottom: video ? "10px" : "0" }} />
               {video && <div style={{ background: "white", padding: "8px 12px", borderRadius: "8px", fontSize: "12px", color: theme.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>🎥 {video.name} — {(video.size / (1024 * 1024)).toFixed(1)} MB</div>}
             </div>
 
             <button onClick={handleUpload} disabled={uploading} style={{ padding: "18px", borderRadius: "18px", border: "none", background: theme.btnBg, color: "white", fontSize: "14px", letterSpacing: "1px", cursor: uploading ? "not-allowed" : "pointer", opacity: uploading ? 0.8 : 1, width: "100%" }}>
-              {uploading ? uploadStep || "UPLOADING..." : "UPLOAD MEMORIES"}
+              {uploading ? uploadStep || t.uploading : t.uploadMemories}
             </button>
 
             {uploading && (
@@ -265,7 +265,7 @@ function EventPage() {
                   <div style={{ height: "100%", background: theme.btnBg, borderRadius: "10px", width: `${uploadProgress}%`, transition: "width 0.3s ease" }} />
                 </div>
                 <div style={{ textAlign: "center", fontSize: "12px", color: theme.sub, marginTop: "6px" }}>
-                  {uploadProgress}% — Please wait, do not close this page...
+                  {uploadProgress}% — {t.pleaseWait}
                 </div>
               </div>
             )}
