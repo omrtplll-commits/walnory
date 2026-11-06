@@ -8,7 +8,7 @@ const translations = {
       babyshower_boy: "🍼 Baby Shower — Boy",
       babyshower_surprise: "🌿 Baby Shower — Surprise",
       birthday: "🎂 Birthday",
-      corporate: "🎉 Event (Christmas, Corporate, Birthday, etc.)",
+      corporate: "🎉 Event (Christmas, Corporate, etc.)",
     },
 
     // Event Labels
@@ -157,7 +157,7 @@ const translations = {
       babyshower_boy: "🍼 Baby Shower — Erkek",
       babyshower_surprise: "🌿 Baby Shower — Sürpriz",
       birthday: "🎂 Doğum Günü",
-      corporate: "🎉 Etkinlik (Noel, Christmas, Kurumsal, Doğum Günü vb.)",
+      corporate: "🎉 Etkinlik (Noel, Christmas, Kurumsal vb.)",
     },
     eventLabels: {
       wedding: "ÖZEL ETKİNLİK",
@@ -288,7 +288,7 @@ const translations = {
       babyshower_boy: "🍼 Baby Shower — Garçon",
       babyshower_surprise: "🌿 Baby Shower — Surprise",
       birthday: "🎂 Anniversaire",
-      corporate: "🎉 Événement (Noël, Entreprise, Anniversaire, etc.)",
+      corporate: "🎉 Événement (Noël, Entreprise, etc.)",
     },
     eventLabels: {
       wedding: "ÉVÉNEMENT PRIVÉ",
@@ -357,7 +357,7 @@ const translations = {
       babyshower_boy: "🍼 Babyparty — Junge",
       babyshower_surprise: "🌿 Babyparty — Überraschung",
       birthday: "🎂 Geburtstag",
-      corporate: "🎉 Veranstaltung (Weihnachten, Firma, Geburtstag usw.)",
+      corporate: "🎉 Veranstaltung (Weihnachten, Firma usw.)",
     },
     eventLabels: {
       wedding: "PRIVATE VERANSTALTUNG",
@@ -426,7 +426,7 @@ const translations = {
       babyshower_boy: "🍼 Baby Shower — Niño",
       babyshower_surprise: "🌿 Baby Shower — Sorpresa",
       birthday: "🎂 Cumpleaños",
-      corporate: "🎉 Evento (Navidad, Corporativo, Cumpleaños, etc.)",
+      corporate: "🎉 Evento (Navidad, Corporativo, etc.)",
     },
     eventLabels: {
       wedding: "EVENTO PRIVADO",
@@ -495,7 +495,7 @@ const translations = {
       babyshower_boy: "🍼 Baby Shower — Bambino",
       babyshower_surprise: "🌿 Baby Shower — Sorpresa",
       birthday: "🎂 Compleanno",
-      corporate: "🎉 Evento (Natale, Aziendale, Compleanno, ecc.)",
+      corporate: "🎉 Evento (Natale, Aziendale, ecc.)",
     },
     eventLabels: {
       wedding: "EVENTO PRIVATO",
