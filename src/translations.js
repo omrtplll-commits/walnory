@@ -8,7 +8,7 @@ const translations = {
       babyshower_boy: "🍼 Baby Shower — Boy",
       babyshower_surprise: "🌿 Baby Shower — Surprise",
       birthday: "🎂 Birthday",
-      corporate: "🏢 Corporate Event",
+      corporate: "🎉 Event (Christmas, Corporate, Birthday, etc.)",
     },
 
     // Event Labels
@@ -46,7 +46,7 @@ const translations = {
     dueDate: "Due Date / Birth Date",
     birthdayName: "Name",
     age: "Age (optional)",
-    companyName: "Company Name",
+    companyName: "Name / Company / Organization",
     corporateEventName: "Event Name",
 
     // EventPage
@@ -157,7 +157,7 @@ const translations = {
       babyshower_boy: "🍼 Baby Shower — Erkek",
       babyshower_surprise: "🌿 Baby Shower — Sürpriz",
       birthday: "🎂 Doğum Günü",
-      corporate: "🏢 Kurumsal Etkinlik",
+      corporate: "🎉 Etkinlik (Noel, Christmas, Kurumsal, Doğum Günü vb.)",
     },
     eventLabels: {
       wedding: "ÖZEL ETKİNLİK",
@@ -187,7 +187,7 @@ const translations = {
     dueDate: "Tahmini / Doğum Tarihi",
     birthdayName: "İsim",
     age: "Yaş (opsiyonel)",
-    companyName: "Şirket Adı",
+    companyName: "Ad Soyad / Şirket Adı / Kurum Adı",
     corporateEventName: "Etkinlik Adı",
     privateEvent: "ÖZEL ETKİNLİK",
     yourName: "Adınız",
@@ -288,7 +288,7 @@ const translations = {
       babyshower_boy: "🍼 Baby Shower — Garçon",
       babyshower_surprise: "🌿 Baby Shower — Surprise",
       birthday: "🎂 Anniversaire",
-      corporate: "🏢 Événement d'entreprise",
+      corporate: "🎉 Événement (Noël, Entreprise, Anniversaire, etc.)",
     },
     eventLabels: {
       wedding: "ÉVÉNEMENT PRIVÉ",
@@ -302,7 +302,7 @@ const translations = {
     galleryTitles: { wedding: "Vos Souvenirs de Mariage", babyshower: "Souvenirs Baby Shower", birthday: "Souvenirs d'Anniversaire", corporate: "Souvenirs de l'Événement" },
     coupleNames: "Noms des Mariés", eventName: "Nom de l'Événement", venueLocation: "Lieu (optionnel)",
     babyName: "Prénom du Bébé (optionnel)", parentNames: "Noms des Parents", dueDate: "Date Prévue / Naissance",
-    birthdayName: "Prénom", age: "Âge (optionnel)", companyName: "Nom de l'Entreprise", corporateEventName: "Nom de l'Événement",
+    birthdayName: "Prénom", age: "Âge (optionnel)", companyName: "Nom / Entreprise / Organisation", corporateEventName: "Nom de l'Événement",
     privateEvent: "ÉVÉNEMENT PRIVÉ", yourName: "Votre Nom", leaveMessage: "Laissez un beau message...",
     photosMax: "PHOTOS (MAX 4)", shortVideo: "VIDÉO COURTE (MAX 1 — 15-20 SEC)",
     uploadMemories: "TÉLÉCHARGER LES SOUVENIRS", uploading: "TÉLÉCHARGEMENT...",
@@ -357,7 +357,7 @@ const translations = {
       babyshower_boy: "🍼 Babyparty — Junge",
       babyshower_surprise: "🌿 Babyparty — Überraschung",
       birthday: "🎂 Geburtstag",
-      corporate: "🏢 Firmenveranstaltung",
+      corporate: "🎉 Veranstaltung (Weihnachten, Firma, Geburtstag usw.)",
     },
     eventLabels: {
       wedding: "PRIVATE VERANSTALTUNG",
@@ -371,7 +371,7 @@ const translations = {
     galleryTitles: { wedding: "Ihre Hochzeitserinnerungen", babyshower: "Babyparty Erinnerungen", birthday: "Geburtstagserinnerungen", corporate: "Veranstaltungserinnerungen" },
     coupleNames: "Namen des Paares", eventName: "Veranstaltungsname", venueLocation: "Veranstaltungsort (optional)",
     babyName: "Babyname (optional)", parentNames: "Namen der Eltern", dueDate: "Geburtstermin",
-    birthdayName: "Name", age: "Alter (optional)", companyName: "Firmenname", corporateEventName: "Veranstaltungsname",
+    birthdayName: "Name", age: "Alter (optional)", companyName: "Name / Firma / Organisation", corporateEventName: "Veranstaltungsname",
     privateEvent: "PRIVATE VERANSTALTUNG", yourName: "Ihr Name", leaveMessage: "Hinterlassen Sie eine Nachricht...",
     photosMax: "FOTOS (MAX 4)", shortVideo: "KURZES VIDEO (MAX 1)",
     uploadMemories: "ERINNERUNGEN HOCHLADEN", uploading: "WIRD HOCHGELADEN...",
@@ -426,7 +426,7 @@ const translations = {
       babyshower_boy: "🍼 Baby Shower — Niño",
       babyshower_surprise: "🌿 Baby Shower — Sorpresa",
       birthday: "🎂 Cumpleaños",
-      corporate: "🏢 Evento Corporativo",
+      corporate: "🎉 Evento (Navidad, Corporativo, Cumpleaños, etc.)",
     },
     eventLabels: {
       wedding: "EVENTO PRIVADO",
@@ -440,7 +440,7 @@ const translations = {
     galleryTitles: { wedding: "Sus Recuerdos de Boda", babyshower: "Recuerdos Baby Shower", birthday: "Recuerdos de Cumpleaños", corporate: "Recuerdos del Evento" },
     coupleNames: "Nombres de la Pareja", eventName: "Nombre del Evento", venueLocation: "Lugar (opcional)",
     babyName: "Nombre del Bebé (opcional)", parentNames: "Nombres de los Padres", dueDate: "Fecha Prevista",
-    birthdayName: "Nombre", age: "Edad (opcional)", companyName: "Nombre de la Empresa", corporateEventName: "Nombre del Evento",
+    birthdayName: "Nombre", age: "Edad (opcional)", companyName: "Nombre / Empresa / Organización", corporateEventName: "Nombre del Evento",
     privateEvent: "EVENTO PRIVADO", yourName: "Su Nombre", leaveMessage: "Deje un hermoso mensaje...",
     photosMax: "FOTOS (MÁX 4)", shortVideo: "VIDEO CORTO (MÁX 1)",
     uploadMemories: "SUBIR RECUERDOS", uploading: "SUBIENDO...",
@@ -495,7 +495,7 @@ const translations = {
       babyshower_boy: "🍼 Baby Shower — Bambino",
       babyshower_surprise: "🌿 Baby Shower — Sorpresa",
       birthday: "🎂 Compleanno",
-      corporate: "🏢 Evento Aziendale",
+      corporate: "🎉 Evento (Natale, Aziendale, Compleanno, ecc.)",
     },
     eventLabels: {
       wedding: "EVENTO PRIVATO",
@@ -509,7 +509,7 @@ const translations = {
     galleryTitles: { wedding: "I Tuoi Ricordi di Nozze", babyshower: "Ricordi Baby Shower", birthday: "Ricordi di Compleanno", corporate: "Ricordi dell'Evento" },
     coupleNames: "Nomi degli Sposi", eventName: "Nome dell'Evento", venueLocation: "Luogo (opzionale)",
     babyName: "Nome del Bambino (opzionale)", parentNames: "Nomi dei Genitori", dueDate: "Data Prevista",
-    birthdayName: "Nome", age: "Età (opzionale)", companyName: "Nome dell'Azienda", corporateEventName: "Nome dell'Evento",
+    birthdayName: "Nome", age: "Età (opzionale)", companyName: "Nome / Azienda / Organizzazione", corporateEventName: "Nome dell'Evento",
     privateEvent: "EVENTO PRIVATO", yourName: "Il Tuo Nome", leaveMessage: "Lascia un bel messaggio...",
     photosMax: "FOTO (MAX 4)", shortVideo: "VIDEO BREVE (MAX 1)",
     uploadMemories: "CARICA RICORDI", uploading: "CARICAMENTO...",
