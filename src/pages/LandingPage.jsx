@@ -147,7 +147,7 @@ function LandingPage() {
           <H>Data Storage</H>
           <P>Your data is stored securely on Google Firebase servers. Files are stored in Firebase Storage and event data in Firestore. Google's security standards apply to all stored data.</P>
           <H>Data Retention</H>
-          <P>Basic package events and all associated files are automatically deleted 20 days after the event date. Premium package events are deleted after 40 days. After deletion, data cannot be recovered.</P>
+          <P>Events and all associated files are automatically deleted 20 days after the event date. After deletion, data cannot be recovered.</P>
           <H>Third Parties</H>
           <P>We do not sell, trade, or share your personal data with third parties. We use EmailJS to send transactional emails and Google Firebase for data storage.</P>
           <H>Your Rights</H>
@@ -166,7 +166,7 @@ function LandingPage() {
           <H>Activation Token</H>
           <P>Each purchase includes one single-use activation token. Tokens cannot be transferred, refunded, or reused once activated. Each token creates one event.</P>
           <H>Data Retention & Deletion</H>
-          <P>Basic package: event data is deleted 20 days after the event date. Premium package: 40 days. WALNORY is not responsible for data loss if the owner fails to download their memories before the deletion date.</P>
+          <P>Event data is deleted 20 days after the event date. WALNORY is not responsible for data loss if the owner fails to download their memories before the deletion date.</P>
           <H>Acceptable Use</H>
           <P>You agree not to upload illegal, harmful, or offensive content. WALNORY reserves the right to remove content that violates these terms without notice.</P>
           <H>Limitation of Liability</H>
@@ -191,7 +191,7 @@ function LandingPage() {
           <H>Kişisel Verilerin İşlenme Amacı</H>
           <P>Toplanan veriler yalnızca WALNORY hizmetinin sunulması amacıyla kullanılmaktadır. Verileriniz üçüncü kişilerle paylaşılmamakta, satılmamakta veya kiralanmamaktadır.</P>
           <H>Kişisel Verilerin Saklanma Süresi</H>
-          <P>Basic paket: etkinlik tarihinden itibaren 20 gün. Premium paket: etkinlik tarihinden itibaren 40 gün. Süre sonunda tüm veriler kalıcı olarak silinmektedir.</P>
+          <P>Veriler, etkinlik tarihinden itibaren 20 gün boyunca saklanır. Süre sonunda tüm veriler kalıcı olarak silinmektedir.</P>
           <H>Kişisel Verilerin Aktarımı</H>
           <P>Verileriniz, Google Firebase altyapısında güvenli olarak saklanmaktadır. E-posta iletimi için EmailJS kullanılmaktadır. Bu hizmet sağlayıcılar dışında herhangi bir üçüncü tarafla veri paylaşımı yapılmamaktadır.</P>
           <H>KVKK Kapsamındaki Haklarınız</H>

@@ -13,6 +13,9 @@ const EMAILJS_SERVICE_ID = "service_zlv4rjh";
 const EMAILJS_TEMPLATE_ID = "template_gsovbjb";
 const EMAILJS_PUBLIC_KEY = "1vTVlmEhBIlqGkfXu";
 
+// Tüm etkinlikler için tek saklama süresi (etkinlik tarihinden sonra kaç gün)
+const RETENTION_DAYS = 20;
+
 function CreateEventPage() {
   const navigate = useNavigate();
   const [eventType, setEventType] = useState("wedding");
@@ -33,7 +36,6 @@ function CreateEventPage() {
   const [loading, setLoading] = useState(false);
   const [eventLink, setEventLink] = useState("");
   const [ownerLink, setOwnerLink] = useState("");
-  const [packageType, setPackageType] = useState("");
   const [deleteDate, setDeleteDate] = useState("");
 
   const getEventTitle = () => {
@@ -61,11 +63,10 @@ function CreateEventPage() {
       if (!tokenData.active) { alert(t.inactiveToken); setLoading(false); return; }
 
       const pkg = tokenData.package || "basic";
-      const days = pkg === "premium" ? 40 : 20;
       const baseDateStr = eventDate || dueDate;
       const baseDate = baseDateStr ? new Date(baseDateStr) : new Date();
       const deleteDateObj = new Date(baseDate);
-      deleteDateObj.setDate(deleteDateObj.getDate() + days);
+      deleteDateObj.setDate(deleteDateObj.getDate() + RETENTION_DAYS);
       const deleteDateStr = deleteDateObj.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
       const ownerId = crypto.randomUUID();
@@ -83,7 +84,6 @@ function CreateEventPage() {
       const generatedOwnerLink = `${SITE_URL}/owner/${ownerId}`;
       setEventLink(generatedLink);
       setOwnerLink(generatedOwnerLink);
-      setPackageType(pkg);
       setDeleteDate(deleteDateStr);
 
       await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
@@ -114,9 +114,8 @@ function CreateEventPage() {
           <div style={{ letterSpacing: "4px", fontSize: "13px", opacity: 0.5, marginBottom: "18px" }}>{t.eventReady}</div>
           <h1 style={{ fontSize: "clamp(28px,5vw,48px)", marginBottom: "18px", color: "#2d2926" }}>{t.eventReadyTitle}</h1>
           <p style={{ opacity: 0.7, lineHeight: "1.8", marginBottom: "8px" }}>{t.eventReadyDesc} <strong>{email}</strong></p>
-          <div style={{ background: packageType === "premium" ? "#f0ede8" : "#fff8f0", border: `1px solid ${packageType === "premium" ? "#c4b8a8" : "#f0c080"}`, borderRadius: "14px", padding: "16px 24px", margin: "24px 0", fontSize: "13px", color: "#4f4740", lineHeight: 1.7 }}>
-            <strong>{packageType === "premium" ? t.premiumPackage : t.basicPackage}</strong><br />
-            {t.availableDays} <strong>{packageType === "premium" ? "40" : "20"}</strong> {t.daysAfter}<br />
+          <div style={{ background: "#fff8f0", border: "1px solid #f0c080", borderRadius: "14px", padding: "16px 24px", margin: "24px 0", fontSize: "13px", color: "#4f4740", lineHeight: 1.7 }}>
+            {t.availableDays} <strong>{RETENTION_DAYS}</strong> {t.daysAfter}<br />
             <span style={{ color: "#c0392b", fontWeight: 600 }}>{t.deletionDate} {deleteDate}</span><br />
             <span style={{ opacity: 0.7, fontSize: "12px" }}>{t.downloadWarning}</span>
           </div>
