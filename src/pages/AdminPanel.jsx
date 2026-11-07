@@ -1,23 +1,47 @@
 import { useState } from "react";
 import * as XLSX from "xlsx";
-import { collection, doc, setDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, doc, setDoc, getDocs, writeBatch } from "firebase/firestore";
 import { db } from "../firebase";
 
 // GÜVENLİK: Admin şifresi — istersen değiştir
 const ADMIN_PASSWORD = "walnory2024admin";
 
+// Token listesini Excel olarak indirir (hem export hem yedek için kullanılır)
+const downloadTokensXlsx = (rows, filePrefix) => {
+  const data = rows.map((t) => ({
+    Token: t.id,
+    Status: t.used ? "USED" : "AVAILABLE",
+    UsedBy: t.usedBy || "",
+    UsedAt: t.usedAt ? new Date(t.usedAt.seconds * 1000).toLocaleDateString() : "",
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Tokens");
+
+  // Kolon genişlikleri
+  ws["!cols"] = [{ wch: 20 }, { wch: 12 }, { wch: 30 }, { wch: 14 }];
+
+  XLSX.writeFile(wb, `${filePrefix}-${Date.now()}.xlsx`);
+};
+
 function AdminPanel() {
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [tokenCount, setTokenCount] = useState(10);
-  const [packageType, setPackageType] = useState("basic");
   const [generating, setGenerating] = useState(false);
   const [generatedTokens, setGeneratedTokens] = useState([]);
-  const [stats, setStats] = useState({ total: 0, basic: 0, premium: 0, used: 0, unused: 0 });
+  const [stats, setStats] = useState({ total: 0, used: 0, unused: 0 });
   const [loadingStats, setLoadingStats] = useState(false);
   const [activeTab, setActiveTab] = useState("generate");
   const [allTokens, setAllTokens] = useState([]);
   const [loadingTokens, setLoadingTokens] = useState(false);
+
+  // Reset sekmesi
+  const [keepList, setKeepList] = useState("");
+  const [deleteConfirm, setDeleteConfirm] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [resetResult, setResetResult] = useState("");
 
   const handleLogin = () => {
     if (password === ADMIN_PASSWORD) {
@@ -32,13 +56,11 @@ function AdminPanel() {
     setLoadingStats(true);
     try {
       const snapshot = await getDocs(collection(db, "tokens"));
-      let basic = 0, premium = 0, used = 0, unused = 0;
-      snapshot.forEach((doc) => {
-        const d = doc.data();
-        if (d.package === "premium") premium++; else basic++;
-        if (d.used) used++; else unused++;
+      let used = 0, unused = 0;
+      snapshot.forEach((d) => {
+        if (d.data().used) used++; else unused++;
       });
-      setStats({ total: snapshot.size, basic, premium, used, unused });
+      setStats({ total: snapshot.size, used, unused });
     } catch (err) {
       console.error(err);
     } finally {
@@ -51,8 +73,8 @@ function AdminPanel() {
     try {
       const snapshot = await getDocs(collection(db, "tokens"));
       const tokens = [];
-      snapshot.forEach((doc) => {
-        tokens.push({ id: doc.id, ...doc.data() });
+      snapshot.forEach((d) => {
+        tokens.push({ id: d.id, ...d.data() });
       });
       tokens.sort((a, b) => (a.used === b.used ? 0 : a.used ? 1 : -1));
       setAllTokens(tokens);
@@ -80,7 +102,7 @@ function AdminPanel() {
         await setDoc(doc(collection(db, "tokens"), token), {
           active: true,
           used: false,
-          package: packageType,
+          package: "basic", // tek paket: etkinlik tarihinden sonra 20 gün
           createdAt: new Date(),
           usedAt: null,
           usedBy: null,
@@ -91,7 +113,7 @@ function AdminPanel() {
 
       setGeneratedTokens(newTokens);
       fetchStats();
-      alert(`✅ ${tokenCount} ${packageType.toUpperCase()} tokens created!`);
+      alert(`✅ ${tokenCount} tokens created!`);
     } catch (err) {
       console.error(err);
       alert("Error generating tokens");
@@ -107,24 +129,66 @@ function AdminPanel() {
   };
 
   const exportCSV = () => {
-    const data = allTokens.map((t) => ({
-      Token: t.id,
-      Package: (t.package || "basic").toUpperCase(),
-      Status: t.used ? "USED" : "AVAILABLE",
-      UsedBy: t.usedBy || "",
-      UsedAt: t.usedAt ? new Date(t.usedAt.seconds * 1000).toLocaleDateString() : "",
-    }));
+    downloadTokensXlsx(allTokens, "walnory-tokens");
+  };
 
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Tokens");
+  // Tokenları toplu silme (koruma listesi hariç)
+  const resetTokens = async () => {
+    if (deleteConfirm !== "DELETE") {
+      alert('Onay için kutuya DELETE yazmalısın.');
+      return;
+    }
 
-    // Kolon genişlikleri
-    ws["!cols"] = [
-      { wch: 20 }, { wch: 12 }, { wch: 12 }, { wch: 30 }, { wch: 14 }
-    ];
+    setDeleting(true);
+    setResetResult("");
 
-    XLSX.writeFile(wb, `walnory-tokens-${Date.now()}.xlsx`);
+    try {
+      const keep = new Set(
+        keepList
+          .split(/[\s,;]+/)
+          .map((s) => s.trim().toUpperCase())
+          .filter(Boolean)
+      );
+
+      const snapshot = await getDocs(collection(db, "tokens"));
+      const toDelete = snapshot.docs.filter((d) => !keep.has(d.id.toUpperCase()));
+      const keptCount = snapshot.size - toDelete.length;
+
+      if (toDelete.length === 0) {
+        alert("Silinecek token yok.");
+        return;
+      }
+
+      const unusedInDelete = toDelete.filter((d) => !d.data().used).length;
+      const ok = window.confirm(
+        `${toDelete.length} token SİLİNECEK (bunların ${unusedInDelete} tanesi hiç kullanılmamış).\n` +
+        `${keptCount} token korunacak.\n\n` +
+        `Önce yedek Excel dosyası inecek. Devam edilsin mi?`
+      );
+      if (!ok) return;
+
+      // 1) Yedek indir
+      const backupRows = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+      downloadTokensXlsx(backupRows, "walnory-tokens-BACKUP");
+
+      // 2) Silme (batch başına en fazla 500 işlem, biz 400 kullanıyoruz)
+      for (let i = 0; i < toDelete.length; i += 400) {
+        const batch = writeBatch(db);
+        toDelete.slice(i, i + 400).forEach((d) => batch.delete(d.ref));
+        await batch.commit();
+      }
+
+      setResetResult(`✅ ${toDelete.length} token silindi, ${keptCount} token korundu. Yedek dosyası indirildi.`);
+      setDeleteConfirm("");
+      setKeepList("");
+      fetchStats();
+      setAllTokens([]);
+    } catch (err) {
+      console.error(err);
+      setResetResult("❌ Silme sırasında hata oluştu: " + (err.message || "bilinmeyen hata"));
+    } finally {
+      setDeleting(false);
+    }
   };
 
   if (!authenticated) {
@@ -149,6 +213,8 @@ function AdminPanel() {
     );
   }
 
+  const tabLabels = { generate: "Generate Tokens", tokens: "All Tokens", reset: "Reset" };
+
   return (
     <div style={{ minHeight: "100vh", background: "linear-gradient(to bottom,#f8f5f0,#efe7dc)", padding: "40px 16px" }}>
       <div style={{ maxWidth: "900px", margin: "0 auto" }}>
@@ -163,8 +229,6 @@ function AdminPanel() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "12px", marginBottom: "32px" }}>
           {[
             { label: "Total Tokens", value: stats.total, color: "#2d2926" },
-            { label: "Basic", value: stats.basic, color: "#7d736b" },
-            { label: "Premium", value: stats.premium, color: "#c4a882" },
             { label: "Used", value: stats.used, color: "#c0392b" },
             { label: "Available", value: stats.unused, color: "#27ae60" },
           ].map((s) => (
@@ -176,11 +240,11 @@ function AdminPanel() {
         </div>
 
         {/* Sekmeler */}
-        <div style={{ display: "flex", gap: "8px", marginBottom: "24px" }}>
-          {["generate", "tokens"].map((tab) => (
+        <div style={{ display: "flex", gap: "8px", marginBottom: "24px", flexWrap: "wrap" }}>
+          {["generate", "tokens", "reset"].map((tab) => (
             <button key={tab} onClick={() => { setActiveTab(tab); if (tab === "tokens") fetchAllTokens(); }}
-              style={{ padding: "10px 24px", borderRadius: "10px", border: "none", background: activeTab === tab ? "#2d2926" : "white", color: activeTab === tab ? "white" : "#2d2926", fontSize: "12px", letterSpacing: "1px", cursor: "pointer", textTransform: "uppercase" }}>
-              {tab === "generate" ? "Generate Tokens" : "All Tokens"}
+              style={{ padding: "10px 24px", borderRadius: "10px", border: "none", background: activeTab === tab ? (tab === "reset" ? "#c0392b" : "#2d2926") : "white", color: activeTab === tab ? "white" : (tab === "reset" ? "#c0392b" : "#2d2926"), fontSize: "12px", letterSpacing: "1px", cursor: "pointer", textTransform: "uppercase" }}>
+              {tabLabels[tab]}
             </button>
           ))}
         </div>
@@ -188,35 +252,23 @@ function AdminPanel() {
         {/* Token Üretme */}
         {activeTab === "generate" && (
           <div style={{ background: "white", borderRadius: "20px", padding: "32px", boxShadow: "0 2px 24px rgba(0,0,0,0.06)" }}>
-            <h3 style={{ fontSize: "18px", color: "#2d2926", marginBottom: "24px" }}>Generate New Tokens</h3>
+            <h3 style={{ fontSize: "18px", color: "#2d2926", marginBottom: "8px" }}>Generate New Tokens</h3>
+            <p style={{ fontSize: "13px", color: "#7d736b", marginBottom: "24px" }}>Her token etkinlik tarihinden sonra 20 gün geçerli galeri sağlar.</p>
 
-            <div style={{ display: "flex", gap: "16px", marginBottom: "20px", flexWrap: "wrap" }}>
-              <div style={{ flex: 1, minWidth: "160px" }}>
-                <div style={{ fontSize: "11px", letterSpacing: "2px", opacity: 0.5, marginBottom: "8px" }}>COUNT</div>
-                <input
-                  type="number"
-                  min="1"
-                  max="500"
-                  value={tokenCount}
-                  onChange={(e) => setTokenCount(parseInt(e.target.value))}
-                  style={{ width: "100%", padding: "14px", borderRadius: "12px", border: "1px solid #e8e0d8", fontSize: "16px", boxSizing: "border-box", outline: "none" }}
-                />
-              </div>
-              <div style={{ flex: 1, minWidth: "160px" }}>
-                <div style={{ fontSize: "11px", letterSpacing: "2px", opacity: 0.5, marginBottom: "8px" }}>PACKAGE</div>
-                <select
-                  value={packageType}
-                  onChange={(e) => setPackageType(e.target.value)}
-                  style={{ width: "100%", padding: "14px", borderRadius: "12px", border: "1px solid #e8e0d8", fontSize: "16px", boxSizing: "border-box", outline: "none", background: "white" }}
-                >
-                  <option value="basic">Basic (20 days)</option>
-                  <option value="premium">Premium (40 days)</option>
-                </select>
-              </div>
+            <div style={{ marginBottom: "20px", maxWidth: "240px" }}>
+              <div style={{ fontSize: "11px", letterSpacing: "2px", opacity: 0.5, marginBottom: "8px" }}>COUNT</div>
+              <input
+                type="number"
+                min="1"
+                max="500"
+                value={tokenCount}
+                onChange={(e) => setTokenCount(parseInt(e.target.value))}
+                style={{ width: "100%", padding: "14px", borderRadius: "12px", border: "1px solid #e8e0d8", fontSize: "16px", boxSizing: "border-box", outline: "none" }}
+              />
             </div>
 
             <button onClick={generateTokens} disabled={generating} style={{ padding: "16px 32px", borderRadius: "14px", border: "none", background: generating ? "#9d948c" : "#2d2926", color: "white", fontSize: "13px", letterSpacing: "1px", cursor: generating ? "not-allowed" : "pointer" }}>
-              {generating ? "GENERATING..." : `GENERATE ${tokenCount} ${packageType.toUpperCase()} TOKENS`}
+              {generating ? "GENERATING..." : `GENERATE ${tokenCount} TOKENS`}
             </button>
 
             {/* Üretilen tokenlar */}
@@ -246,7 +298,7 @@ function AdminPanel() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
               <h3 style={{ fontSize: "18px", color: "#2d2926", margin: 0 }}>All Tokens</h3>
               <button onClick={exportCSV} style={{ padding: "10px 20px", borderRadius: "10px", border: "none", background: "#2d2926", color: "white", fontSize: "12px", letterSpacing: "1px", cursor: "pointer" }}>
-                ⬇ EXPORT CSV
+                ⬇ EXPORT EXCEL
               </button>
             </div>
 
@@ -257,7 +309,7 @@ function AdminPanel() {
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
                   <thead>
                     <tr style={{ borderBottom: "2px solid #f0ebe4" }}>
-                      {["Token", "Package", "Status", "Used By", "Used At"].map((h) => (
+                      {["Token", "Status", "Used By", "Used At"].map((h) => (
                         <th key={h} style={{ padding: "10px 12px", textAlign: "left", fontSize: "10px", letterSpacing: "2px", opacity: 0.5 }}>{h}</th>
                       ))}
                     </tr>
@@ -266,11 +318,6 @@ function AdminPanel() {
                     {allTokens.map((t) => (
                       <tr key={t.id} style={{ borderBottom: "1px solid #f8f5f0" }}>
                         <td style={{ padding: "10px 12px", fontFamily: "monospace", color: "#2d2926" }}>{t.id}</td>
-                        <td style={{ padding: "10px 12px" }}>
-                          <span style={{ background: t.package === "premium" ? "#f5e6d0" : "#f0ebe4", padding: "3px 10px", borderRadius: "6px", fontSize: "11px", letterSpacing: "1px" }}>
-                            {(t.package || "basic").toUpperCase()}
-                          </span>
-                        </td>
                         <td style={{ padding: "10px 12px" }}>
                           <span style={{ color: t.used ? "#c0392b" : "#27ae60", fontWeight: 600, fontSize: "12px" }}>
                             {t.used ? "USED" : "AVAILABLE"}
@@ -284,6 +331,50 @@ function AdminPanel() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Reset */}
+        {activeTab === "reset" && (
+          <div style={{ background: "white", borderRadius: "20px", padding: "32px", boxShadow: "0 2px 24px rgba(0,0,0,0.06)", border: "1px solid #f0c8c0" }}>
+            <h3 style={{ fontSize: "18px", color: "#c0392b", marginBottom: "12px" }}>Reset Tokens</h3>
+            <p style={{ fontSize: "13px", color: "#4f4740", lineHeight: 1.7, marginBottom: "8px" }}>
+              Veritabanındaki <strong>tüm tokenları siler</strong>, aşağıya yazdıkların hariç. Silmeden önce yedek Excel dosyası otomatik iner.
+            </p>
+            <p style={{ fontSize: "13px", color: "#4f4740", lineHeight: 1.7, marginBottom: "24px" }}>
+              Daha önce oluşturulmuş etkinlikler ve galeriler <strong>etkilenmez</strong>. Ama müşterinin elindeki <strong>kullanılmamış</strong> bir token silinirse "Geçersiz token" hatası verir. Para alıp verdiğin tokenları aşağıya yaz.
+            </p>
+
+            <div style={{ fontSize: "11px", letterSpacing: "2px", opacity: 0.5, marginBottom: "8px" }}>SİLİNMEYECEK TOKENLAR (her satıra bir tane, boş bırakabilirsin)</div>
+            <textarea
+              value={keepList}
+              onChange={(e) => setKeepList(e.target.value)}
+              rows={5}
+              placeholder={"WAL-XXXX-XXX\nWAL-YYYY-YYY"}
+              style={{ width: "100%", padding: "14px", borderRadius: "12px", border: "1px solid #e8e0d8", fontSize: "14px", fontFamily: "monospace", boxSizing: "border-box", outline: "none", marginBottom: "20px", resize: "vertical" }}
+            />
+
+            <div style={{ fontSize: "11px", letterSpacing: "2px", opacity: 0.5, marginBottom: "8px" }}>ONAY İÇİN DELETE YAZ</div>
+            <input
+              value={deleteConfirm}
+              onChange={(e) => setDeleteConfirm(e.target.value)}
+              placeholder="DELETE"
+              style={{ width: "100%", maxWidth: "240px", padding: "14px", borderRadius: "12px", border: "1px solid #e8e0d8", fontSize: "16px", boxSizing: "border-box", outline: "none", marginBottom: "24px", display: "block" }}
+            />
+
+            <button
+              onClick={resetTokens}
+              disabled={deleting || deleteConfirm !== "DELETE"}
+              style={{ padding: "16px 32px", borderRadius: "14px", border: "none", background: deleting || deleteConfirm !== "DELETE" ? "#d9b5af" : "#c0392b", color: "white", fontSize: "13px", letterSpacing: "1px", cursor: deleting || deleteConfirm !== "DELETE" ? "not-allowed" : "pointer" }}
+            >
+              {deleting ? "DELETING..." : "BACKUP & DELETE TOKENS"}
+            </button>
+
+            {resetResult && (
+              <div style={{ marginTop: "20px", padding: "14px 18px", borderRadius: "12px", background: "#f8f5f0", fontSize: "13px", color: "#2d2926", lineHeight: 1.6 }}>
+                {resetResult}
               </div>
             )}
           </div>
