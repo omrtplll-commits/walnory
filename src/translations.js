@@ -253,7 +253,7 @@ const translations = {
     heroTitle: "Anları Zamansız Anılara Dönüştür",
     heroDesc: "Misafirlerin fotoğraf, video ve duygusal mesajlarını güzelce tasarlanmış bir QR deneyimiyle anında paylaştığı lüks bir anı platformu.",
     visitEtsy: "ETSY MAĞAZAMIZI ZİYARET ET",
-    watchDemo: "DEMOİZLE",
+    watchDemo: "DEMO İZLE",
     heroFooter: "Özel gününüzün bir kez yaşandığını biliyoruz ve her anıyı unutulmaz kılmak için her detayı tasarlıyoruz.",
     howItWorks: "NASIL ÇALIŞIR",
     elegantEffortless: "Zarif & Zahmetsiz",

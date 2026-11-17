@@ -10,6 +10,7 @@ function LandingPage() {
   const TR_URL = "https://www.tabelastudio.com.tr";
   const isTurkish = navigator.language?.toLowerCase().startsWith("tr");
   const [modal, setModal] = useState(null); // "privacy" | "terms" | "kvkk" | "contact"
+  const [demoOpen, setDemoOpen] = useState(false);
 
   const Modal = ({ title, children }) => (
     <div
@@ -58,7 +59,7 @@ function LandingPage() {
                 🇹🇷 Türkiye'den Satın Al
               </button>
             )}
-            <button style={{ ...secondaryButton, opacity: 0.4, cursor: "default" }}>{t.watchDemo}</button>
+            <button onClick={() => setDemoOpen(true)} style={secondaryButton}>{t.watchDemo}</button>
           </div>
           <div style={{ opacity: 0.65, fontSize: "clamp(14px,3vw,16px)", lineHeight: "2", maxWidth: "750px", margin: "0 auto" }}>
             {t.heroFooter}
@@ -134,6 +135,24 @@ function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* DEMO VIDEO */}
+      {demoOpen && (
+        <div
+          onClick={() => setDemoOpen(false)}
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}
+        >
+          <button onClick={() => setDemoOpen(false)} style={{ position: "absolute", top: "20px", right: "24px", background: "none", border: "none", color: "white", fontSize: "28px", cursor: "pointer" }}>✕</button>
+          <video
+            src="/demo.mp4"
+            controls
+            autoPlay
+            playsInline
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: "100%", maxHeight: "85vh", borderRadius: "16px", background: "black" }}
+          />
+        </div>
+      )}
 
       {/* MODALler */}
       {modal === "privacy" && (
